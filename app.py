@@ -93,28 +93,54 @@ st.markdown("""
 
 # Authentication Gateway
 if not auth.is_logged_in():
-    st.markdown("""
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 70vh;">
-            <div style="background: white; padding: 3rem; border-radius: 20px; border: 1px solid #E5E7EB; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 450px;">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <h2 style="margin: 0; font-size: 2rem; letter-spacing: -0.05em;">Trikon Central</h2>
-                    <p style="color: #6B7280; font-size: 1rem; margin-top: 0.5rem;">Secure Access Portal</p>
+    # Centered Login Container with Logo
+    col1, col2, col3 = st.columns([1, 1.2, 1])
+    
+    with col2:
+        st.markdown("<br><br><br>", unsafe_allow_html=True)
+        with st.container(border=True):
+            # Header
+            st.markdown("""
+                <div style="text-align: center; padding-top: 10px; padding-bottom: 20px;">
+                    <div style="margin-bottom: 20px;">
+                        <!-- Embed Logo -->
+                        <img src="https://trikon.com/wp-content/uploads/2023/10/logo.png" width="160" alt="Trikon Logo" style="opacity: 0.9;">
+                    </div>
                 </div>
-    """, unsafe_allow_html=True)
-    
-    with st.container():
-        email = st.text_input("Work Email", placeholder="name@trikon.com")
-        password = st.text_input("Password", type="password", placeholder="••••••••")
-        login_btn = st.button("Sign In →", use_container_width=True)
-        
-        if login_btn:
-            if auth.verify_login(email, password):
-                st.success("Access Granted. Redirecting...")
-                st.rerun()
-            else:
-                st.error("Invalid credentials. Please contact your admin.")
-    
-    st.markdown("</div></div>", unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+
+            # Local fallback for logo if internet is disconnected, but using URL for better resolution often
+            # If you want local only:
+            # logo_path = "images/trikon_logo.png"
+            # if os.path.exists(logo_path):
+            #     st.image(logo_path, use_column_width=False, width=150)
+            
+            st.markdown("""
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.03em;">Welcome Back</h2>
+                    <p style="color: #6B7280; font-size: 0.9rem; margin-top: 0.5rem;">Enter your credentials to access the dashboard</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            email = st.text_input("Email Address", placeholder="name@trikon.com", key="login_email")
+            password = st.text_input("Password", type="password", placeholder="••••••••", key="login_pwd")
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            login_btn = st.button("Sign In", use_container_width=True, type="primary")
+            
+            if login_btn:
+                if auth.verify_login(email, password):
+                    st.success("Successfully Authenticated")
+                    st.rerun()
+                else:
+                    st.error("Invalid credentials. Please contact your admin.")
+            
+            st.markdown("""
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <p style="font-size: 0.75rem; color: #9CA3AF;">© 2024 Trikon. All rights reserved.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
     st.stop()
 
 # --- LOGGED IN AREA ---
