@@ -12,17 +12,39 @@ def render():
         st.subheader("Card Details")
         template = st.selectbox("Select Template", ["Trikon", "Metaweb"])
         
+        # Style-Specific Defaults
+        if template == "Trikon":
+            default_website = "www.trikon.com.au"
+            default_office = "1300 TRIKON (874 566)"
+        else:
+            default_website = "metaweb.com.au"
+            default_office = "1300 262 987"
+
         first_name = st.text_input("First Name", "John")
         last_name = st.text_input("Last Name", "Doe")
         title = st.text_input("Job Title", "General Manager")
         
         phone_mobile = st.text_input("Mobile Phone", "0400 000 000")
-        phone_office = st.text_input("Office Phone", "1300 000 000")
+        phone_office = st.text_input("Office Phone", default_office)
         email = st.text_input("Email", "john.doe@example.com")
-        website = st.text_input("Website", "www.example.com")
+        website = st.text_input("Website", default_website)
         
-        address_line1 = st.text_input("Address Line 1", "Level 1, 123 Example St")
-        address_line2 = st.text_input("Address Line 2", "Sydney NSW 2000")
+        addresses = [
+            "3/7 Meridian Place, Bella Vista NSW 2153, Australia",
+            "Suite 208, 111 Overton Rd, Williams Landing VIC 3030, Australia",
+            "Unit 3, 304 Montague Road, West End QLD 4101, Australia",
+            "Suite 2, 161 Maitland Road, Mayfield NSW 2304, Australia",
+            "Level 5, Suite 5, 221-229 Crown St, Wollongong NSW, Australia",
+            "Level 5, Suite 5, 221-229 Crown St, Wollongong NSW 2500, Australia (Business Hub)",
+            "Shop 4, 285 Windsor St, Richmond NSW 2753, Australia (Hawkesbury Business Hub)"
+        ]
+        
+        selected_address = st.selectbox("Select Address", addresses)
+        
+        # Split address for PDF (Simple split by first comma or keeping it smart)
+        addr_parts = selected_address.split(", ", 1)
+        address_line1 = addr_parts[0]
+        address_line2 = addr_parts[1] if len(addr_parts) > 1 else ""
 
         data = {
             "first_name": first_name,
@@ -32,7 +54,7 @@ def render():
             "phone_office": phone_office,
             "email": email,
             "website": website,
-            "address": f"{address_line1}, {address_line2}", # For vCard
+            "address": selected_address, # For vCard
             "address_line1": address_line1,
             "address_line2": address_line2
         }
