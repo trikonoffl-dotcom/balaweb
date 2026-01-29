@@ -3,6 +3,7 @@ import os
 import tools.business_card
 import tools.welcome_aboard
 import tools.dashboard
+from streamlit_option_menu import option_menu
 
 st.set_page_config(layout="wide", page_title="Trikon Dashboard", page_icon="⚙️")
 
@@ -14,8 +15,8 @@ st.markdown("""
     :root {
         --primary: #000000;
         --accent: #0071E3;
-        --bg: #F5F5F7;
-        --sidebar-bg: #FFFFFF;
+        --bg: #FFFFFF; /* Brighter background */
+        --sidebar-bg: #F5F5F7; /* Grey sidebar like macOS */
         --card-bg: #FFFFFF;
         --text: #1D1D1F;
         --text-secondary: #86868B;
@@ -37,124 +38,86 @@ st.markdown("""
         letter-spacing: -0.022em !important;
     }
 
-    /* Buttons */
-    .stButton>button {
-        background-color: var(--primary) !important;
-        color: white !important;
-        border-radius: 980px !important; /* Apple pill style */
-        border: none !important;
-        padding: 0.8rem 2rem !important;
-        font-weight: 500 !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        cursor: pointer !important;
-    }
-
-    .stButton>button:hover {
-        background-color: #333333 !important;
-        transform: scale(1.02) !important;
-    }
-
     /* Sidebar Customization */
     section[data-testid="stSidebar"] {
         background-color: var(--sidebar-bg) !important;
         border-right: 1px solid var(--border) !important;
     }
-
-    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {
-        padding-top: 2rem !important;
+    
+    section[data-testid="stSidebar"] > div {
+        background-color: var(--sidebar-bg) !important;
     }
 
-    /* Input Fields */
-    .stTextInput>div>div>input, .stSelectbox>div>div>div {
-        border-radius: 12px !important;
-        border: 1px solid var(--border) !important;
-        background-color: white !important;
-        padding: 0.5rem !important;
+    /* Logo Container */
+    .logo-container {
+        padding: 1rem 0.5rem;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .logo-container img {
+        width: 100px !important; /* Fixed smaller logo size */
+        height: auto;
     }
 
-    .stTextInput>div>div>input:focus {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-    }
-
-    /* Cards Simulation */
+    /* Metric Cards Redesign */
     .stMetric {
-        background: var(--card-bg);
-        padding: 1.5rem !important;
-        border-radius: 20px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-        border: 1px solid rgba(0,0,0,0.02) !important;
+        background: white !important;
+        padding: 24px !important;
+        border-radius: 16px !important;
+        border: 1px solid #E5E5E7 !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+    }
+
+    /* Fix visibility of text in forms */
+    .stTextInput label, .stSelectbox label {
+        font-weight: 500 !important;
+        color: var(--text) !important;
+        font-size: 0.9rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Sidebar Header with Logo
+# Sidebar with Logo and Styled Menu
 with st.sidebar:
     logo_path = r"images/trikon-logo-blue.png"
     if os.path.exists(logo_path):
-        st.image(logo_path, use_column_width=True)
+        st.image(logo_path, width=100) # Explicit width
     else:
         st.title("Trikon")
+    
     st.markdown("<br>", unsafe_allow_html=True)
-
-# Custom App-Style Navigation CSS
-st.markdown("""
-<style>
-    /* Styled Radio as Vertical Menu */
-    [data-testid="stSidebar"] .stRadio > div {
-        background-color: transparent !important;
-        gap: 8px !important;
-    }
     
-    [data-testid="stSidebar"] .stRadio label {
-        background-color: #F5F5F7 !important;
-        padding: 0.8rem 1rem !important;
-        border-radius: 12px !important;
-        border: 1px solid #D2D2D7 !important;
-        margin-bottom: 8px !important;
-        width: 100% !important;
-        display: block !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        color: #1D1D1F !important;
-        font-weight: 500 !important;
-    }
-    
-    /* Hover effect */
-    [data-testid="stSidebar"] .stRadio label:hover {
-        background-color: #E2E2E7 !important;
-        transform: translateX(4px) !important;
-    }
-    
-    /* Active/Selected State - Streamlit marks the active radio specifically */
-    [data-testid="stSidebar"] div[role="radiogroup"] > div[data-checked="true"] > label {
-        background-color: var(--accent) !important;
-        color: white !important;
-        border-color: var(--accent) !important;
-        box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2) !important;
-    }
+    # option_menu for professional app-style navigation
+    selected = option_menu(
+        menu_title=None,
+        options=["Dashboard", "Business Card", "Welcome Aboard", "Settings"],
+        icons=["house", "person-badge", "person-plus", "gear"], # Bootstrap icons used by option_menu
+        menu_icon="cast",
+        default_index=0,
+        styles={
+            "container": {"padding": "0!important", "background-color": "transparent"},
+            "icon": {"color": "#86868B", "font-size": "1.1rem"}, 
+            "nav-link": {
+                "font-size": "0.95rem", 
+                "text-align": "left", 
+                "margin": "4px", 
+                "border-radius": "10px",
+                "color": "#1D1D1F",
+                "font-weight": "500"
+            },
+            "nav-link-selected": {"background-color": "#0071E3", "color": "white"},
+        }
+    )
 
-    /* Hide the actual radio circle */
-    [data-testid="stSidebar"] .stRadio div[data-testid="stMarkdownContainer"] p {
-        margin-left: 0px !important;
-    }
-    
-    [data-testid="stSidebar"] .stRadio label div:first-child {
-        display: none !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Navigation
-st.sidebar.markdown("<p style='font-weight: 600; font-size: 0.85rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em; padding-left: 5px;'>Main Menu</p>", unsafe_allow_html=True)
-tool = st.sidebar.radio("Select Tool", ["Dashboard", "Business Card Generator", "Welcome Aboard Generator", "Coming Soon"], label_visibility="collapsed")
-
-if tool == "Dashboard":
+# Routing
+if selected == "Dashboard":
     tools.dashboard.render()
-elif tool == "Business Card Generator":
+elif selected == "Business Card":
     tools.business_card.render()
-elif tool == "Welcome Aboard Generator":
+elif selected == "Welcome Aboard":
     tools.welcome_aboard.render()
-elif tool == "Coming Soon":
-    st.title("Coming Soon")
-    st.write("More tools will be added here.")
+elif selected == "Settings":
+    st.title("Settings")
+    st.write("Settings and preferences will be added here.")
