@@ -64,7 +64,7 @@ def render():
         generate_btn = st.button("Generate ID Card", use_container_width=True)
 
     with col2:
-        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Final Preview</h4>")
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Final Preview</h4>", unsafe_allow_html=True)
         
         if not (generate_btn and photo_file):
              with st.container(border=True):
