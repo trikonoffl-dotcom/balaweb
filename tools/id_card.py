@@ -161,11 +161,11 @@ def render():
                             page1.insert_text((20, 93), f"Emergency Number: {emergency_no}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
                             page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
                             
-                            addr_lines = office_address.split("\n")
-                            y_start = 173
-                            for line in addr_lines:
-                                page1.insert_text((15, y_start), line.strip(), fontsize=6.5, fontname=get_font("ru-reg"), color=white_text)
-                                y_start += 8.5
+                            
+                            # Address: Centered horizontally, moved down 3px (173 -> 176)
+                            # Using insert_textbox with align=1 (Center) matches the requirement
+                            addr_rect = fitz.Rect(0, 176, page1.rect.width, page1.rect.height)
+                            page1.insert_textbox(addr_rect, office_address, fontsize=6.5, fontname=get_font("ru-reg"), color=white_text, align=1)
                         
                         # Preview
                         st.markdown("### Front Side")
