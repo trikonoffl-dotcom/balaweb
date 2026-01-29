@@ -79,11 +79,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Sidebar with Logo and Styled Menu
+# Sidebar Header with Logo
 with st.sidebar:
     logo_path = r"images/trikon_logo.png"
     if os.path.exists(logo_path):
-        st.image(logo_path, width=150) # Increased width
+        # Center the logo and use a larger width closer to its native 235px
+        st.markdown('<div style="display: flex; justify-content: center; margin-bottom: 20px;">', unsafe_allow_html=True)
+        st.image(logo_path, width=220) 
+        st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.title("Trikon")
     
