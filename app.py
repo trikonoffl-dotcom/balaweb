@@ -4,6 +4,8 @@ import tools.business_card
 import tools.welcome_aboard
 import tools.dashboard
 import tools.id_card
+import tools.settings
+import utils.auth as auth
 from streamlit_option_menu import option_menu
 
 st.set_page_config(layout="wide", page_title="Trikon Dashboard", page_icon="⚙️")
@@ -16,33 +18,26 @@ st.markdown("""
     :root {
         --primary: #000000;
         --accent: #0071E3;
-        --bg: #F9FAFB; /* Linear Neutral Background */
+        --bg: #F9FAFB;
         --sidebar-bg: #FFFFFF;
         --card-bg: #FFFFFF;
         --text: #111827;
         --text-secondary: #6B7280;
-        --border: #E5E7EB; /* Crisp Thin Border */
+        --border: #E5E7EB;
         --radius: 12px;
     }
 
-    /* Modern Minimalist Background */
     .stApp {
         background-color: var(--bg);
         color: var(--text);
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Sidebar - Crisp & Clean */
     section[data-testid="stSidebar"] {
         background-color: var(--sidebar-bg) !important;
         border-right: 1px solid var(--border) !important;
     }
     
-    section[data-testid="stSidebar"] > div {
-        background-color: transparent !important;
-    }
-
-    /* Remove Sidebar Top Padding & Empty Header */
     [data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
         padding-top: 0rem !important;
     }
@@ -51,7 +46,6 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Bento Grid System - Crisp White Cards */
     [data-testid="stVerticalBlockBorderWrapper"] > div {
         background: var(--card-bg) !important;
         border: 1px solid var(--border) !important;
@@ -61,7 +55,6 @@ st.markdown("""
         margin-bottom: 1.5rem !important;
     }
 
-    /* Metric Cards - Minimalist Pro */
     [data-testid="stMetric"] {
         background: var(--card-bg) !important;
         border: 1px solid var(--border) !important;
@@ -70,44 +63,13 @@ st.markdown("""
         box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
     }
 
-    [data-testid="stMetricLabel"] {
-        color: var(--text-secondary) !important;
-        font-weight: 500 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-        font-size: 0.75rem !important;
-    }
-
-    [data-testid="stMetricValue"] {
-        color: var(--text) !important;
-        font-weight: 700 !important;
-        letter-spacing: -0.03em !important;
-    }
-
-    /* Typography */
-    h1, h2, h3, .stHeader {
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 700 !important;
-        color: var(--text) !important;
-        letter-spacing: -0.04em !important;
-    }
-
-    /* Re-styling Inputs for "Linear" Look */
     .stTextInput>div>div>input, .stSelectbox>div>div>div {
         background-color: white !important;
         border-radius: 8px !important;
         border: 1px solid var(--border) !important;
         padding: 0.5rem 0.75rem !important;
-        font-size: 0.95rem !important;
-        color: var(--text) !important;
     }
     
-    .stTextInput>div>div>input:focus {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.1) !important;
-    }
-
-    /* Precision Button Style */
     .stButton>button {
         background: var(--primary) !important;
         color: white !important;
@@ -115,78 +77,100 @@ st.markdown("""
         border: 1px solid var(--primary) !important;
         padding: 0.6rem 1.5rem !important;
         font-weight: 500 !important;
-        font-size: 0.95rem !important;
-        width: 100% !important;
         transition: all 0.2s ease !important;
     }
 
-    .stButton>button:hover {
-        background: #1F2937 !important;
-        border-color: #1F2937 !important;
-    }
-
-    /* Adjust Padding of Main Content */
     .block-container {
         padding-top: 2rem !important;
         padding-bottom: 50px !important;
     }
 
-    /* Hide Streamlit Header gap */
     header[data-testid="stHeader"] {
         display: none !important;
-    }
-
-    /* Navigation Menu Style - Standard Professional */
-    .nav-link-selected {
-        background-color: #F3F4F6 !important;
-        color: var(--text) !important;
-        border: 1px solid var(--border) !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Sidebar Header with Logo
+# Authentication Gateway
+if not auth.is_logged_in():
+    st.markdown("""
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 70vh;">
+            <div style="background: white; padding: 3rem; border-radius: 20px; border: 1px solid #E5E7EB; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 450px;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="margin: 0; font-size: 2rem; letter-spacing: -0.05em;">Trikon Central</h2>
+                    <p style="color: #6B7280; font-size: 1rem; margin-top: 0.5rem;">Secure Access Portal</p>
+                </div>
+    """, unsafe_allow_html=True)
+    
+    with st.container():
+        email = st.text_input("Work Email", placeholder="name@trikon.com")
+        password = st.text_input("Password", type="password", placeholder="••••••••")
+        login_btn = st.button("Sign In →", use_container_width=True)
+        
+        if login_btn:
+            if auth.verify_login(email, password):
+                st.success("Access Granted. Redirecting...")
+                st.rerun()
+            else:
+                st.error("Invalid credentials. Please contact your admin.")
+    
+    st.markdown("</div></div>", unsafe_allow_html=True)
+    st.stop()
+
+# --- LOGGED IN AREA ---
+user = auth.get_current_user()
+
 with st.sidebar:
     logo_path = r"images/trikon_logo.png"
     if os.path.exists(logo_path):
-        # Center the logo with high-end padding
         st.markdown('<div style="display: flex; justify-content: center; padding: 20px 0;">', unsafe_allow_html=True)
-        st.image(logo_path, width=200) 
+        st.image(logo_path, width=180) 
         st.markdown('</div>', unsafe_allow_html=True)
     else:
-        st.title("Trikon")
+        st.title("Trikon Dashboard")
+        
+    st.markdown(f"""
+        <div style="padding: 10px; margin: 10px; background: #F9FAFB; border-radius: 10px; border: 1px solid #E5E7EB;">
+            <p style="margin:0; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; font-weight: 600;">Signed in as</p>
+            <p style="margin:0; font-size: 0.9rem; font-weight: 500; color: #111827;">{user['email']}</p>
+            <p style="margin:0; font-size: 0.7rem; color: #0071E3; font-weight: 600;">{user['role'].upper()}</p>
+        </div>
+    """, unsafe_allow_html=True)
     
-    # option_menu for professional app-style navigation
+    # Filter tools based on user permissions
+    all_mapping = {
+        "Dashboard": {"icon": "house", "render": tools.dashboard.render},
+        "Business Card": {"icon": "person-badge", "render": tools.business_card.render},
+        "Welcome Aboard": {"icon": "person-plus", "render": tools.welcome_aboard.render},
+        "ID Card": {"icon": "person-vcard", "render": tools.id_card.render},
+        "Settings": {"icon": "gear", "render": tools.settings.render}
+    }
+    
+    allowed = user.get("allowed_tools", ["Dashboard"])
+    visible_tools = [t for t in all_mapping.keys() if t in allowed]
+    visible_icons = [all_mapping[t]["icon"] for t in visible_tools]
+    
     selected = option_menu(
         menu_title=None,
-        options=["Dashboard", "Business Card", "Welcome Aboard", "ID Card", "Settings"],
-        icons=["house", "person-badge", "person-plus", "person-vcard", "gear"], # Bootstrap icons used by option_menu
+        options=visible_tools,
+        icons=visible_icons,
         menu_icon="cast",
         default_index=0,
         styles={
             "container": {"padding": "0!important", "background-color": "transparent"},
-            "icon": {"font-size": "1.1rem"}, # Removed specific color to allow inheritance
+            "icon": {"font-size": "1.1rem"},
             "nav-link": {
-                "font-size": "0.95rem", 
-                "text-align": "left", 
-                "margin": "4px", 
-                "border-radius": "10px",
-                "color": "#1D1D1F",
-                "font-weight": "500"
+                "font-size": "0.95rem", "text-align": "left", "margin": "4px", "border-radius": "10px",
+                "color": "#1D1D1F", "font-weight": "500"
             },
             "nav-link-selected": {"background-color": "#0071E3", "color": "white !important"},
         }
     )
+    
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    if st.button("Logout", icon="🔒", use_container_width=True):
+        auth.logout()
 
-# Routing
-if selected == "Dashboard":
-    tools.dashboard.render()
-elif selected == "Business Card":
-    tools.business_card.render()
-elif selected == "Welcome Aboard":
-    tools.welcome_aboard.render()
-elif selected == "ID Card":
-    tools.id_card.render()
-elif selected == "Settings":
-    st.title("Settings")
-    st.write("Settings and preferences will be added here.")
+# Render selected tool
+if selected in all_mapping:
+    all_mapping[selected]["render"]()
