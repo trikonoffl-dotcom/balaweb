@@ -11,3 +11,6 @@ rembg[cpu]
 onnxruntime
 opencv-python-headless
 extra-streamlit-components
+fastapi
+uvicorn
+python-multipart
