@@ -123,24 +123,16 @@ def render():
                         page.insert_text((15.6, 226.3), f"ID Number: {id_number}", fontsize=10, fontname="pop-reg", color=white_text)
                         
                         # Photo Placement
-                        # Target BBox: [-20, 30, 120, 180] (estimated center-left)
-                        # We'll use a safer visible bbox
-                        photo_rect = fitz.Rect(-2.16, 39.49, 101.6, 195.23)
+                        # Based on analysis of the original sample (sundararajan):
+                        # The primary photo sits at y=27 to y=147 (just above the name).
+                        # Using a slightly wider rect for better centering with background removal.
+                        photo_rect = fitz.Rect(-15, 20, 120, 147)
                         
                         # Process image to ensure it fills the space correctly (Center-Crop)
                         img = Image.open(io.BytesIO(processed_photo))
-                        # Identify face/subject bbox (Photoroom already removed background, so bbox is the subject)
-                        sub_bbox = img.getbbox() # (left, top, right, bottom)
-                        if sub_bbox:
-                            # Crop to subject only (adds focus)
-                            img = img.crop(sub_bbox)
                         
-                        # Fit to the target aspect ratio
-                        target_w = photo_rect.width
-                        target_h = photo_rect.height
-                        
-                        # Create a high-res version for the PDF
-                        # We want to maintain aspect ratio but fill the height primarily as it's a portrait card
+                        # We want to maintain aspect ratio while filling the height (147 - 20 = 127)
+                        # We'll use fit to cover the rect while maintaining ratio
                         img_byte_arr = io.BytesIO()
                         img.save(img_byte_arr, format='PNG')
                         final_photo_bytes = img_byte_arr.getvalue()
