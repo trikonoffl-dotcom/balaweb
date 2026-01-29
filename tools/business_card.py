@@ -41,10 +41,19 @@ def render():
         
         selected_address = st.selectbox("Select Address", addresses)
         
-        # Split address for PDF (Simple split by first comma or keeping it smart)
-        addr_parts = selected_address.split(", ", 1)
-        address_line1 = addr_parts[0]
-        address_line2 = addr_parts[1] if len(addr_parts) > 1 else ""
+        # Smart split for better balance
+        parts = selected_address.split(", ")
+        # If the first part is short (like "Suite 208"), combine it with the second part
+        if len(parts) > 2 and (len(parts[0]) < 12 or any(x in parts[0].lower() for x in ['suite', 'unit', 'level', 'shop'])):
+            default_addr1 = f"{parts[0]}, {parts[1]}"
+            default_addr2 = ", ".join(parts[2:])
+        else:
+            default_addr1 = parts[0]
+            default_addr2 = ", ".join(parts[1:])
+            
+        # Allow user to manually refine the lines
+        address_line1 = st.text_input("Refine Address Line 1", default_addr1)
+        address_line2 = st.text_input("Refine Address Line 2", default_addr2)
 
         data = {
             "first_name": first_name,
