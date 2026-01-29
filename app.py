@@ -81,9 +81,9 @@ st.markdown("""
 
 # Sidebar with Logo and Styled Menu
 with st.sidebar:
-    logo_path = r"images/trikon-logo-blue.png"
+    logo_path = r"images/trikon_logo.png"
     if os.path.exists(logo_path):
-        st.image(logo_path, width=100) # Explicit width
+        st.image(logo_path, width=150) # Increased width
     else:
         st.title("Trikon")
     
