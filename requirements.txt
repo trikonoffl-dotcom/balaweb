@@ -5,3 +5,4 @@ Pillow>=10.0.0
 supabase>=2.3.0
 pandas>=2.0.0
 streamlit-option-menu
+requests

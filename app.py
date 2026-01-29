@@ -3,6 +3,7 @@ import os
 import tools.business_card
 import tools.welcome_aboard
 import tools.dashboard
+import tools.id_card
 from streamlit_option_menu import option_menu
 
 st.set_page_config(layout="wide", page_title="Trikon Dashboard", page_icon="⚙️")
@@ -158,8 +159,8 @@ with st.sidebar:
     # option_menu for professional app-style navigation
     selected = option_menu(
         menu_title=None,
-        options=["Dashboard", "Business Card", "Welcome Aboard", "Settings"],
-        icons=["house", "person-badge", "person-plus", "gear"], # Bootstrap icons used by option_menu
+        options=["Dashboard", "Business Card", "Welcome Aboard", "ID Card", "Settings"],
+        icons=["house", "person-badge", "person-plus", "person-vcard", "gear"], # Bootstrap icons used by option_menu
         menu_icon="cast",
         default_index=0,
         styles={
@@ -184,6 +185,8 @@ elif selected == "Business Card":
     tools.business_card.render()
 elif selected == "Welcome Aboard":
     tools.welcome_aboard.render()
+elif selected == "ID Card":
+    tools.id_card.render()
 elif selected == "Settings":
     st.title("Settings")
     st.write("Settings and preferences will be added here.")
