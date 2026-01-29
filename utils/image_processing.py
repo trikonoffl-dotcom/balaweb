@@ -1,10 +1,9 @@
-import cv2
 import numpy as np
 import streamlit as st
-from rembg import remove
 
 def remove_background(image_bytes):
     """Local background removal using rembg."""
+    from rembg import remove
     try:
         return remove(image_bytes)
     except Exception as e:
@@ -13,6 +12,7 @@ def remove_background(image_bytes):
 
 def get_face_cascade():
     """Returns the face cascade classifier."""
+    import cv2
     return cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 def auto_crop_face(image_bytes):
@@ -21,6 +21,7 @@ def auto_crop_face(image_bytes):
     Target Ratio: ~0.97 (95x98)
     """
     try:
+        import cv2
         # Convert bytes to numpy array
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -79,6 +80,7 @@ def smart_crop_welcome(image_bytes):
     Target: Square-ish or slightly rectangular to fit the rounded box.
     """
     try:
+        import cv2
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         
