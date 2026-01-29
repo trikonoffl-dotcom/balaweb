@@ -92,7 +92,16 @@ def render():
             
             if os.path.exists(pdf_path):
                 try:
+                    import generator
                     pdf_bytes = generator.generate_card(pdf_path, data, style=template)
+                    
+                    # Log to Supabase
+                    import utils.db as db
+                    db.log_generation(
+                        tool="Business Card",
+                        name=f"{data['first_name']} {data['last_name']}",
+                        metadata={"style": template, "company": data.get("company", "Trikon/Metaweb")}
+                    )
                     
                     # Display Preview using PyMuPDF
                     doc = fitz.open("pdf", pdf_bytes)

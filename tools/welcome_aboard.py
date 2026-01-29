@@ -124,6 +124,14 @@ def render():
                     
                     # Date
                     page.insert_text((563, 700), date_str, fontsize=26, fontname="pop-bold", color=text_color)
+                    
+                    # Log to Supabase
+                    import utils.db as db
+                    db.log_generation(
+                        tool="Welcome Aboard",
+                        name=f"{first_name} {last_name}",
+                        metadata={"title": title, "date": date_str}
+                    )
 
                     # Export to JPG
                     pix = page.get_pixmap(matrix=fitz.Matrix(2, 2)) # Higher resolution
