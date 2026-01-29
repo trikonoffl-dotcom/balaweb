@@ -9,3 +9,5 @@ services:
     envVars:
       - key: SCARF_NO_ANALYTICS
         value: "true"
+      - key: PYTHON_VERSION
+        value: "3.11.9"
