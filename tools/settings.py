@@ -24,7 +24,7 @@ def render():
 
             if users_data:
                 df = pd.DataFrame(users_data)
-                st.dataframe(df[["email", "role", "allowed_tools", "created_at"]], use_column_width=True)
+                st.dataframe(df[["email", "role", "allowed_tools", "created_at"]], use_container_width=True)
             
             with st.expander("➕ Add New User", expanded=False):
                 with st.form("add_user_form"):
