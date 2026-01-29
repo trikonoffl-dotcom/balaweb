@@ -18,7 +18,7 @@ app = FastAPI()
 # Allow CORS for local dev and Vercel
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # For production, restrict this to your Cloudflare domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

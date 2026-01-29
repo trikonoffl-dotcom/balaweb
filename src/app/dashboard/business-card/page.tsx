@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { getApiUrl } from '@/lib/api'
 import { Loader2, Download, RefreshCw } from 'lucide-react'
 
 // Office Addresses
@@ -90,7 +91,7 @@ export default function BusinessCardPage() {
         Object.entries(formData).forEach(([key, val]) => form.append(key, String(val)))
 
         try {
-            const res = await fetch('/api/preview-business-card', { method: 'POST', body: form })
+            const res = await fetch(getApiUrl('/api/preview-business-card'), { method: 'POST', body: form })
             if (res.ok) {
                 const blob = await res.blob()
                 setPreviewUrl(URL.createObjectURL(blob))
@@ -105,7 +106,7 @@ export default function BusinessCardPage() {
         Object.entries(formData).forEach(([key, val]) => form.append(key, String(val)))
 
         try {
-            const res = await fetch('/api/generate-business-card', { method: 'POST', body: form })
+            const res = await fetch(getApiUrl('/api/generate-business-card'), { method: 'POST', body: form })
             if (res.ok) {
                 const blob = await res.blob()
                 const url = window.URL.createObjectURL(blob)

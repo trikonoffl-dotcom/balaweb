@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { getApiUrl } from '@/lib/api'
 import { Loader2, Download, RefreshCw } from 'lucide-react'
 
 // Office Addresses (Moved from Python)
@@ -83,7 +84,7 @@ export default function IDCardPage() {
         })
 
         try {
-            const res = await fetch('/api/preview-id-card', {
+            const res = await fetch(getApiUrl('/api/preview-id-card'), {
                 method: 'POST',
                 body: form
             })
@@ -111,7 +112,7 @@ export default function IDCardPage() {
         })
 
         try {
-            const res = await fetch('/api/generate-id-card', {
+            const res = await fetch(getApiUrl('/api/generate-id-card'), {
                 method: 'POST',
                 body: form
             })

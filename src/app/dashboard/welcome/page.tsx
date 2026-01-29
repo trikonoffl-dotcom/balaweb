@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
+import { getApiUrl } from '@/lib/api'
 import { Loader2, Download, RefreshCw } from 'lucide-react'
 
 export default function WelcomePage() {
@@ -36,7 +37,7 @@ export default function WelcomePage() {
         })
 
         try {
-            const res = await fetch('/api/generate-welcome', {
+            const res = await fetch(getApiUrl('/api/generate-welcome'), {
                 method: 'POST',
                 body: form
             })
