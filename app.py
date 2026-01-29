@@ -3,73 +3,86 @@ import tools.business_card
 import tools.welcome_aboard
 import tools.dashboard
 
-st.set_page_config(layout="wide", page_title="Trikon Dashboard")
+st.set_page_config(layout="wide", page_title="Trikon Dashboard", page_icon="⚙️")
 
 # Global CSS Injection
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
     :root {
-        --primary: #6366F1;
-        --secondary: #818CF8;
-        --cta: #10B981;
-        --bg: #F5F3FF;
-        --text: #1E1B4B;
+        --primary: #000000;
+        --accent: #0071E3;
+        --bg: #F5F5F7;
+        --sidebar-bg: #FFFFFF;
+        --card-bg: #FFFFFF;
+        --text: #1D1D1F;
+        --text-secondary: #86868B;
+        --border: #D2D2D7;
     }
 
     /* Main App Background */
     .stApp {
         background-color: var(--bg);
         color: var(--text);
-        font-family: 'Open Sans', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     /* Typography */
     h1, h2, h3, .stHeader {
-        font-family: 'Poppins', sans-serif !important;
+        font-family: 'Inter', sans-serif !important;
         font-weight: 700 !important;
         color: var(--text) !important;
+        letter-spacing: -0.022em !important;
     }
 
     /* Buttons */
     .stButton>button {
-        background-color: var(--cta) !important;
+        background-color: var(--primary) !important;
         color: white !important;
-        border-radius: 8px !important;
+        border-radius: 980px !important; /* Apple pill style */
         border: none !important;
-        padding: 0.6rem 1.5rem !important;
-        font-weight: 600 !important;
-        transition: all 0.2s ease !important;
+        padding: 0.8rem 2rem !important;
+        font-weight: 500 !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         cursor: pointer !important;
     }
 
     .stButton>button:hover {
-        opacity: 0.9 !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important;
+        background-color: #333333 !important;
+        transform: scale(1.02) !important;
     }
 
     /* Sidebar Customization */
     section[data-testid="stSidebar"] {
-        background-color: white !important;
-        border-right: 1px solid #E2E8F0 !important;
+        background-color: var(--sidebar-bg) !important;
+        border-right: 1px solid var(--border) !important;
     }
 
-    section[data-testid="stSidebar"] .stRadio > label {
-        color: var(--text) !important;
-        font-weight: 600 !important;
+    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {
+        padding-top: 2rem !important;
     }
 
     /* Input Fields */
     .stTextInput>div>div>input, .stSelectbox>div>div>div {
-        border-radius: 8px !important;
-        border: 1px solid #E2E8F0 !important;
+        border-radius: 12px !important;
+        border: 1px solid var(--border) !important;
+        background-color: white !important;
+        padding: 0.5rem !important;
     }
 
     .stTextInput>div>div>input:focus {
-        border-color: var(--primary) !important;
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
+    }
+
+    /* Cards Simulation */
+    .stMetric {
+        background: var(--card-bg);
+        padding: 1.5rem !important;
+        border-radius: 20px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+        border: 1px solid rgba(0,0,0,0.02) !important;
     }
 </style>
 """, unsafe_allow_html=True)

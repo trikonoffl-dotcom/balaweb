@@ -7,27 +7,29 @@ def render():
     <style>
         .metric-card {
             background: white;
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid #D2D2D7;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
         }
         .metric-title {
-            color: #64748B;
-            font-size: 0.9rem;
-            font-weight: 600;
+            color: #86868B;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
         }
         .metric-value {
-            color: #1E1B4B;
-            font-size: 2rem;
+            color: #1D1D1F;
+            font-size: 2.5rem;
             font-weight: 700;
+            letter-spacing: -0.02em;
         }
     </style>
     """, unsafe_allow_html=True)

@@ -27,16 +27,16 @@ def make_rounded(image, width, height, radius):
 
 def render():
     st.title("Welcome Aboard Generator")
-    st.markdown("<p style='color: #64748B; font-size: 1.1rem;'>Create stunning welcome images for new team members.</p>", unsafe_allow_html=True)
-    st.divider()
+    st.markdown("<p style='color: #86868B; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>Create premium welcome assets for your growing team.</p>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 1.2], gap="large")
 
     with col1:
-        st.subheader("Employee Setup")
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Employee Setup</h4>", unsafe_allow_html=True)
         
         with st.container():
-            st.markdown("##### Personal Info")
+            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Personal info</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 first_name = st.text_input("First Name", "Suresh")
@@ -46,7 +46,7 @@ def render():
         
         st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
-            st.markdown("##### Join Date & Media")
+            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Join Date & Media</p>", unsafe_allow_html=True)
             date_obj = st.date_input("Joining Date", datetime.date(2026, 1, 12))
             photo_file = st.file_uploader("Upload Profile Photo", type=["jpg", "jpeg", "png"])
             
@@ -57,7 +57,7 @@ def render():
         generate_btn = st.button("Generate Welcome Image", use_container_width=True)
 
     with col2:
-        st.subheader("Final Result")
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Final Result</h4>", unsafe_allow_html=True)
         if generate_btn and photo_file:
             # Relative path for Cloud and Local
             current_dir = os.path.dirname(os.path.abspath(__file__))

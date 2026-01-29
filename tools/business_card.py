@@ -5,13 +5,13 @@ import fitz # PyMuPDF
 
 def render():
     st.title("Business Card Generator")
-    st.markdown("<p style='color: #64748B; font-size: 1.1rem;'>Professional, high-quality business cards in seconds.</p>", unsafe_allow_html=True)
-    st.divider()
+    st.markdown("<p style='color: #86868B; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>Craft high-fidelity, professional business cards with precision.</p>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 1.2], gap="large")
 
     with col1:
-        st.subheader("Card Configuration")
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Card Configuration</h4>", unsafe_allow_html=True)
         template = st.selectbox("Select Template", ["Trikon", "Metaweb"])
         
         # Style-Specific Defaults
@@ -22,8 +22,9 @@ def render():
             default_website = "metaweb.com.au"
             default_office = "1300 262 987"
 
+        st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
-            st.markdown("##### Employee Info")
+            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Employee Info</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 first_name = st.text_input("First Name", "John")
@@ -33,7 +34,7 @@ def render():
         
         st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
-            st.markdown("##### Contact Details")
+            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Contact Details</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 phone_mobile = st.text_input("Mobile Phone", "0400 000 000")
@@ -48,7 +49,7 @@ def render():
         
         st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
-            st.markdown("##### Office Location")
+            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Office Location</p>", unsafe_allow_html=True)
             addresses = [
                 "3/7 Meridian Place, Bella Vista NSW 2153, Australia",
                 "Suite 208, 111 Overton Rd, Williams Landing VIC 3030, Australia",
