@@ -93,6 +93,16 @@ st.markdown("""
 
 # Authentication Gateway
 if not auth.is_logged_in():
+    import base64
+    
+    def get_base64_logo(path):
+        try:
+            with open(path, "rb") as f:
+                data = f.read()
+            return base64.b64encode(data).decode()
+        except:
+            return None
+
     # Centered Login Container with Logo
     col1, col2, col3 = st.columns([1, 1.2, 1])
     
@@ -100,21 +110,20 @@ if not auth.is_logged_in():
         st.markdown("<br><br><br>", unsafe_allow_html=True)
         with st.container(border=True):
             # Header
-            st.markdown("""
-                <div style="text-align: center; padding-top: 10px; padding-bottom: 20px;">
-                    <div style="margin-bottom: 20px;">
-                        <!-- Embed Logo -->
-                        <img src="https://trikon.com/wp-content/uploads/2023/10/logo.png" width="160" alt="Trikon Logo" style="opacity: 0.9;">
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            # Local fallback for logo if internet is disconnected, but using URL for better resolution often
-            # If you want local only:
-            # logo_path = "images/trikon_logo.png"
-            # if os.path.exists(logo_path):
-            #     st.image(logo_path, use_column_width=False, width=150)
+            logo_path = r"images/trikon_logo.png"
+            logo_b64 = get_base64_logo(logo_path)
             
+            if logo_b64:
+                st.markdown(f"""
+                    <div style="text-align: center; padding-top: 10px; padding-bottom: 20px;">
+                        <div style="margin-bottom: 20px;">
+                            <img src="data:image/png;base64,{logo_b64}" width="160" alt="Trikon Logo" style="opacity: 0.9;">
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.title("Trikon")
+
             st.markdown("""
                 <div style="text-align: center; margin-bottom: 2rem;">
                     <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.03em;">Welcome Back</h2>
