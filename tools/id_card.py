@@ -93,35 +93,51 @@ def render():
                         doc = fitz.open(template_path)
                         
                         # --- FONT REGISTRATION ---
-                        current_dir = os.path.dirname(os.path.abspath(__file__))
-                        font_dir = os.path.join(current_dir, "..", "fonts", "Rubik", "static")
-                        if not os.path.exists(font_dir):
-                            font_dir = r"C:\Users\pabal\Documents\Businesscard\fonts\Rubik\static"
+                        # Strategy: Try to find the font directory using multiple anchors
+                        possible_font_dirs = [
+                            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "fonts", "Rubik", "static"), # ../fonts/Rubik/static
+                            os.path.join(os.getcwd(), "fonts", "Rubik", "static"), # ./fonts/Rubik/static
+                            r"C:\Users\pabal\Documents\Businesscard\fonts\Rubik\static" # Local absolute fallback
+                        ]
                         
+                        font_dir = next((d for d in possible_font_dirs if os.path.exists(d)), None)
+                        
+                        # Define font mapping
                         fonts_map = {
-                            "ru-bold": os.path.join(font_dir, "Rubik-Bold.ttf"),
-                            "ru-reg": os.path.join(font_dir, "Rubik-Regular.ttf"),
-                            "ru-semi": os.path.join(font_dir, "Rubik-SemiBold.ttf"),
-                            "ru-italic": os.path.join(font_dir, "Rubik-Italic.ttf")
+                            "ru-bold": "Rubik-Bold.ttf",
+                            "ru-reg": "Rubik-Regular.ttf",
+                            "ru-semi": "Rubik-SemiBold.ttf",
+                            "ru-italic": "Rubik-Italic.ttf"
                         }
                         
-                        # FRONT PAGE (Index 0)
-                        page0 = doc[0]
-                        for name, path in fonts_map.items():
-                            if os.path.exists(path):
-                                page0.insert_font(fontname=name, fontfile=path)
+                        loaded_fonts = []
+                        if font_dir:
+                            for name, filename in fonts_map.items():
+                                path = os.path.join(font_dir, filename)
+                                if os.path.exists(path):
+                                    try:
+                                        # Register on ALL pages in the doc
+                                        for page in doc:
+                                            page.insert_font(fontname=name, fontfile=path)
+                                        loaded_fonts.append(name)
+                                    except Exception as e:
+                                        st.warning(f"Failed to load font {name}: {e}")
                         
+                        # Fallback Function
+                        def get_font(desired_font, fallback="helv"):
+                            return desired_font if desired_font in loaded_fonts else fallback
+
                         blue_text = (18/255, 34/255, 66/255)
                         white_text = (1, 1, 1)
                         
                         # Front Text
-                        page0.insert_text((14.8, 148), first_name.upper(), fontsize=15, fontname="ru-bold", color=blue_text)
-                        page0.insert_text((15.0, 168), last_name.upper(), fontsize=11, fontname="ru-reg", color=blue_text)
-                        page0.insert_text((15.5, 183), title, fontsize=8, fontname="ru-reg", color=blue_text)
+                        page0.insert_text((14.8, 148), first_name.upper(), fontsize=15, fontname=get_font("ru-bold"), color=blue_text)
+                        page0.insert_text((15.0, 168), last_name.upper(), fontsize=11, fontname=get_font("ru-reg"), color=blue_text)
+                        page0.insert_text((15.5, 183), title, fontsize=8, fontname=get_font("ru-reg"), color=blue_text)
                         
                         date_str = doj.strftime("%d-%m-%Y")
-                        page0.insert_text((15.1, 196), f"D.O.J:  {date_str}", fontsize=8, fontname="ru-bold", color=blue_text)
-                        page0.insert_text((15.6, 226), f"ID Number: {id_number}", fontsize=10, fontname="ru-reg", color=white_text)
+                        page0.insert_text((15.1, 196), f"D.O.J:  {date_str}", fontsize=8, fontname=get_font("ru-bold"), color=blue_text)
+                        page0.insert_text((15.6, 226), f"ID Number: {id_number}", fontsize=10, fontname=get_font("ru-reg"), color=white_text)
                         
                         # --- DYNAMIC PHOTO PLACEMENT ---
                         # Base coordinates from previous refinement
@@ -140,18 +156,15 @@ def render():
                         # BACK PAGE (Index 1)
                         if len(doc) > 1:
                             page1 = doc[1]
-                            for name, path in fonts_map.items():
-                                if os.path.exists(path):
-                                    page1.insert_font(fontname=name, fontfile=path)
                             
-                            page1.insert_text((20, 93), f"Emergency Number: {emergency_no}", fontsize=7, fontname="ru-reg", color=white_text)
-                            page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname="ru-reg", color=white_text)
-                            page1.insert_text((20, 167), "Trikon Telesoft Private Limited", fontsize=7, fontname="ru-semi", color=white_text)
+                            page1.insert_text((20, 93), f"Emergency Number: {emergency_no}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
+                            page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
+                            page1.insert_text((20, 167), "Trikon Telesoft Private Limited", fontsize=7, fontname=get_font("ru-semi"), color=white_text)
                             
                             addr_lines = office_address.split("\n")
                             y_start = 173
                             for line in addr_lines:
-                                page1.insert_text((15, y_start), line.strip(), fontsize=6.5, fontname="ru-reg", color=white_text)
+                                page1.insert_text((15, y_start), line.strip(), fontsize=6.5, fontname=get_font("ru-reg"), color=white_text)
                                 y_start += 8.5
                         
                         # Preview
