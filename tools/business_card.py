@@ -4,14 +4,14 @@ import os
 import fitz # PyMuPDF
 
 def render():
-    st.title("📇 Business Card Generator")
+    st.title("Business Card Generator")
     st.markdown("<p style='color: #64748B; font-size: 1.1rem;'>Professional, high-quality business cards in seconds.</p>", unsafe_allow_html=True)
     st.divider()
 
     col1, col2 = st.columns([1, 1.2], gap="large")
 
     with col1:
-        st.subheader("🛠️ Card Configuration")
+        st.subheader("Card Configuration")
         template = st.selectbox("Select Template", ["Trikon", "Metaweb"])
         
         # Style-Specific Defaults
@@ -23,7 +23,7 @@ def render():
             default_office = "1300 262 987"
 
         with st.container():
-            st.markdown("##### 👤 Employee Info")
+            st.markdown("##### Employee Info")
             c1, c2 = st.columns(2)
             with c1:
                 first_name = st.text_input("First Name", "John")
@@ -33,7 +33,7 @@ def render():
         
         st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
-            st.markdown("##### 📞 Contact Details")
+            st.markdown("##### Contact Details")
             c1, c2 = st.columns(2)
             with c1:
                 phone_mobile = st.text_input("Mobile Phone", "0400 000 000")
@@ -48,7 +48,7 @@ def render():
         
         st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
-            st.markdown("##### 📍 Office Location")
+            st.markdown("##### Office Location")
             addresses = [
                 "3/7 Meridian Place, Bella Vista NSW 2153, Australia",
                 "Suite 208, 111 Overton Rd, Williams Landing VIC 3030, Australia",

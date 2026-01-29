@@ -32,7 +32,7 @@ def render():
     </style>
     """, unsafe_allow_html=True)
 
-    st.title("📊 Trikon Performance Dashboard")
+    st.title("Trikon Performance Dashboard")
     
     data, total_count = db.get_stats()
     
@@ -73,7 +73,7 @@ def render():
 
     # History Table
     if data:
-        st.subheader("📋 Generation History")
+        st.subheader("Generation History")
         df = pd.DataFrame(data)
         df = df[['created_at', 'tool', 'name', 'metadata']]
         df['created_at'] = pd.to_datetime(df['created_at']).dt.strftime('%Y-%m-%d %H:%M')
@@ -81,7 +81,7 @@ def render():
         
         # Simple Chart
         st.markdown("<br>", unsafe_allow_html=True)
-        st.subheader("📈 Growth Trends")
+        st.subheader("Growth Trends")
         if monthly_stats:
             chart_data = pd.DataFrame(list(monthly_stats.items()), columns=['Month', 'Count']).sort_values('Month')
             # Custom line chart color

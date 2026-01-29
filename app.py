@@ -3,7 +3,7 @@ import tools.business_card
 import tools.welcome_aboard
 import tools.dashboard
 
-st.set_page_config(layout="wide", page_title="Trikon Dashboard", page_icon="📊")
+st.set_page_config(layout="wide", page_title="Trikon Dashboard")
 
 # Global CSS Injection
 st.markdown("""
