@@ -107,7 +107,7 @@ if not auth.is_logged_in():
     col1, col2, col3 = st.columns([1, 1.2, 1])
     
     with col2:
-        st.markdown("<br><br><br>", unsafe_allow_html=True)
+        st.markdown("<br><br>", unsafe_allow_html=True)
         with st.container(border=True):
             # Header
             logo_path = r"images/trikon_logo.png"
@@ -115,9 +115,9 @@ if not auth.is_logged_in():
             
             if logo_b64:
                 st.markdown(f"""
-                    <div style="text-align: center; padding-top: 10px; padding-bottom: 20px;">
-                        <div style="margin-bottom: 20px;">
-                            <img src="data:image/png;base64,{logo_b64}" width="160" alt="Trikon Logo" style="opacity: 0.9;">
+                    <div style="text-align: center; padding-top: 5px; padding-bottom: 10px;">
+                        <div style="margin-bottom: 10px;">
+                            <img src="data:image/png;base64,{logo_b64}" width="150" alt="Trikon Logo" style="opacity: 0.9;">
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
@@ -125,9 +125,9 @@ if not auth.is_logged_in():
                 st.title("Trikon")
 
             st.markdown("""
-                <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
                     <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.03em;">Welcome Back</h2>
-                    <p style="color: #6B7280; font-size: 0.9rem; margin-top: 0.5rem;">Enter your credentials to access the dashboard</p>
+                    <p style="color: #6B7280; font-size: 0.9rem; margin-top: 0.25rem;">Enter your credentials to access the dashboard</p>
                 </div>
             """, unsafe_allow_html=True)
             
@@ -145,8 +145,8 @@ if not auth.is_logged_in():
                     st.error("Invalid credentials. Please contact your admin.")
             
             st.markdown("""
-                <div style="text-align: center; margin-top: 1.5rem;">
-                    <p style="font-size: 0.75rem; color: #9CA3AF;">© 2024 Trikon. All rights reserved.</p>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <p style="font-size: 0.75rem; color: #9CA3AF;">© 2026 Trikon. All rights reserved.</p>
                 </div>
             """, unsafe_allow_html=True)
             
