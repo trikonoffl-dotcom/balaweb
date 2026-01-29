@@ -42,24 +42,22 @@ def render():
     with col2:
         st.subheader("Preview")
         if generate_btn:
-        # Determine Path
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        # Templates are located in C:\Users\pabal\Documents\Businesscard\Templates
-        # When deployed, they will be in the project root / Templates
-        templates_dir = os.path.join(current_dir, "..", "Templates")
-        
-        if template == "Trikon":
-            pdf_path = os.path.join(templates_dir, "Name_Trikon.pdf")
-        else:
-            pdf_path = os.path.join(templates_dir, "Name_MetaWeb.pdf")
-        
-        # Absolute fallback for local user path if relative fails during development
-        if not os.path.exists(pdf_path):
-             local_fixed_path = r"C:\Users\pabal\Documents\Businesscard\Templates"
-             if template == "Trikon":
-                pdf_path = os.path.join(local_fixed_path, "Name_Trikon.pdf")
-             else:
-                pdf_path = os.path.join(local_fixed_path, "Name_MetaWeb.pdf")
+            # Determine Path
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            templates_dir = os.path.join(current_dir, "..", "Templates")
+            
+            if template == "Trikon":
+                pdf_path = os.path.join(templates_dir, "Name_Trikon.pdf")
+            else:
+                pdf_path = os.path.join(templates_dir, "Name_MetaWeb.pdf")
+            
+            # Absolute fallback for local user path if relative fails during development
+            if not os.path.exists(pdf_path):
+                 local_fixed_path = r"C:\Users\pabal\Documents\Businesscard\Templates"
+                 if template == "Trikon":
+                    pdf_path = os.path.join(local_fixed_path, "Name_Trikon.pdf")
+                 else:
+                    pdf_path = os.path.join(local_fixed_path, "Name_MetaWeb.pdf")
             
             if os.path.exists(pdf_path):
                 try:
