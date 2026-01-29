@@ -160,7 +160,6 @@ def render():
                             
                             page1.insert_text((20, 93), f"Emergency Number: {emergency_no}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
                             page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
-                            page1.insert_text((20, 167), "Trikon Telesoft Private Limited", fontsize=7, fontname=get_font("ru-semi"), color=white_text)
                             
                             addr_lines = office_address.split("\n")
                             y_start = 173
