@@ -48,9 +48,13 @@ st.markdown("""
         background-color: var(--sidebar-bg) !important;
     }
 
-    /* Remove Sidebar Top Padding */
+    /* Remove Sidebar Top Padding & Empty Header */
     [data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
-        padding-top: 1rem !important;
+        padding-top: 0rem !important;
+    }
+    
+    [data-testid="stSidebarHeader"] {
+        display: none !important;
     }
 
     /* Logo Container */
