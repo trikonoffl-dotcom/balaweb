@@ -1,0 +1,33 @@
+--- Extracting text from: C:\Users\pabal\Downloads\Kane Nelson.pdf ---
+Page 1:
+APAC TECHNOLOGY FAST 500
+WINNER 2020
+FIREWALL TELCO CCTVMANAGED PRINT
+--------------------
+Page 2:
+ KANE NELSON
+Business Development Manager
+Level 2, Suite 25, 8 Clunies Ross Court
+Brisbane Technology Park, QLD 4113
+0490 189 488
+kane@trikon.com.au
+1300 TRIKON (874 566)
+www.trikon.com.au
+
+--------------------
+--- Extracting text from: C:\Users\pabal\Downloads\Frank Ajmera New Meta.pdf ---
+Page 1:
+Ofﬁcial Digital
+Marketing Partner
+--------------------
+Page 2:
+Frank Ajmera
+State Manager
+frank.a@metaweb.net.au
+metaweb.com.au
+Level 2, Suite 25, 8 Clunies Ross Court
+Brisbane Technology Park, QLD 4113
+1300 262 987
+0413 743 678
+
+--------------------

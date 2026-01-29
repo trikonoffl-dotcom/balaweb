@@ -1,0 +1,6 @@
+File: C:\Users\pabal\Downloads\Kane Nelson.pdf
+Norm: (1.0, 1.0, 1.0)
+--------------------
+File: C:\Users\pabal\Downloads\Frank Ajmera New Meta.pdf
+Norm: (0.9725490196078431, 0.9725490196078431, 0.9764705882352941)
+--------------------

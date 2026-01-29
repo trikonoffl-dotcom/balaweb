@@ -4,6 +4,7 @@ import os
 import io
 from PIL import Image, ImageDraw, ImageOps
 import datetime
+from utils.image_processing import smart_crop_welcome
 
 def get_date_suffix(day):
     if 4 <= day <= 20 or 24 <= day <= 30:
@@ -46,6 +47,7 @@ def render():
             st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;'>Join Date & Media</p>", unsafe_allow_html=True)
             date_obj = st.date_input("Joining Date", datetime.date(2026, 1, 12))
             photo_file = st.file_uploader("Upload Profile Photo", type=["jpg", "jpeg", "png"])
+            use_auto_crop = st.checkbox("Smart Auto-Crop", value=True, help="Automatically centers face and focuses on head")
             
             suffix = get_date_suffix(date_obj.day)
             date_str = f"{date_obj.day}{suffix} {date_obj.strftime('%b %Y')}"
@@ -99,6 +101,11 @@ def render():
                     
                     # Process Photo
                     photo_bytes = photo_file.read()
+                    
+                    if use_auto_crop:
+                        with st.spinner("AI is determining best crop..."):
+                            photo_bytes = smart_crop_welcome(photo_bytes)
+
                     original_img = Image.open(io.BytesIO(photo_bytes))
                     
                     # Create Rounded Image

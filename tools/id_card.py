@@ -5,115 +5,14 @@ import io
 import fitz
 import datetime
 from PIL import Image, ImageOps
-from rembg import remove
 
 import cv2
 import numpy as np
-
-def remove_background(image_bytes):
-    """Local background removal using rembg."""
-    try:
-        return remove(image_bytes)
-    except Exception as e:
-        st.error(f"Local background removal failed: {e}")
-        return None
-
-def auto_crop_face(image_bytes):
-    """Smartly crops the image to a Head-to-Chest composition."""
-    try:
-        # Convert bytes to numpy array
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        
-        # Convert to grayscale for detection
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        
-        # Load Face Cascade
-        # Try to use internal st/cv2 path or download if needed
-        # For simplicity in this env, we use the default included in cv2
-        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-        
-        if len(faces) == 0:
-            return image_bytes # No face found, return original
-            
-        # Pick the largest face (x, y, w, h)
-        faces = sorted(faces, key=lambda f: f[2] * f[3], reverse=True)
-        x, y, w, h = faces[0]
-        
-        # Calculate Crop Coordinates
-        # Top: Face Top - 0.5 * Face Height (Headroom)
-        # Bottom: Face Bottom + 1.2 * Face Height (Chest)
-        # Center: Face Center
-        
-        face_center_x = x + w // 2
-        
-        # ID Card Slot Ratio (Matches the PDF slot 95x98 approx 0.97)
-        # Increased from 0.8 to include more shoulders (prevent left/right crop)
-        target_ratio = 95 / 98 
-        
-        # Determine crop height based on face size logic
-        # Slightly zoomed out to show more context if needed, but keeping existing vertical logic
-        crop_top = max(0, int(y - 0.6 * h))
-        crop_bottom = min(img.shape[0], int(y + h + 1.2 * h))
-        crop_h = crop_bottom - crop_top
-        
-        # Determine crop width based on ratio
-        crop_w = int(crop_h * target_ratio)
-        
-        # Centering width around face center
-        crop_left = max(0, face_center_x - crop_w // 2)
-        crop_right = min(img.shape[1], crop_left + crop_w)
-        
-        # Adjust if we hit edges
-        if crop_right - crop_left < crop_w:
-            crop_left = max(0, crop_right - crop_w)
-            
-        # Crop
-        cropped_img = img[crop_top:crop_bottom, crop_left:crop_right]
-        
-        # Convert back to bytes
-        is_success, buffer = cv2.imencode(".png", cropped_img)
-        return buffer.tobytes()
-        
-    except Exception as e:
-        print(f"Auto-crop failed: {e}")
-        return image_bytes
+from utils.image_processing import remove_background, auto_crop_face
 
 def render():
     st.title("AI ID Card Generator")
     st.markdown("<p style='color: #6B7280; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>AI-powered ID cards with local background removal and precision alignment tools.</p>", unsafe_allow_html=True)
-    
-    # ... (skipping unchanged parts) ...
-
-                        # --- DYNAMIC PHOTO PLACEMENT ---
-                        # Base coordinates adjusted per user request:
-                        # Move left 4px (15 -> 11)
-                        # Move 0.5px (assumed Y adjustment 28 -> 28.5)
-                        base_x, base_y = 11 + x_offset, 28.5 + y_offset
-                        base_w, base_h = 95 * scale, 98 * scale
-                        
-                        # Center the scaled image within the movement
-                        # Adjust base_x/y to keep it centered when scaling
-                        adj_x = base_x - (base_w - 95) / 2
-                        adj_y = base_y - (base_h - 98) / 2
-                        
-                        photo_rect = fitz.Rect(adj_x, adj_y, adj_x + base_w, adj_y + base_h)
-                        page0.insert_image(photo_rect, stream=processed_photo)
-                        
-                        # BACK PAGE (Index 1)
-                        if len(doc) > 1:
-                            page1 = doc[1]
-                            
-                            page1.insert_text((20, 93), f"Emergency Number: {emergency_no}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
-                            page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
-                            
-                            
-                            # Address: Centered horizontally, moved up 2px (176 -> 174)
-                            # Using insert_textbox with align=1 (Center) matches the requirement
-                            addr_rect = fitz.Rect(0, 174, page1.rect.width, page1.rect.height)
-                            page1.insert_textbox(addr_rect, office_address, fontsize=6.5, fontname=get_font("ru-reg"), color=white_text, align=1)
 
     # Office Addresses
     offices = {
@@ -249,9 +148,10 @@ def render():
                         page0.insert_text((15.6, 226), f"ID Number: {id_number}", fontsize=10, fontname=get_font("ru-reg"), color=white_text)
                         
                         # --- DYNAMIC PHOTO PLACEMENT ---
-                        # Base coordinates from previous refinement
-                        # Base rect: (15, 28, 110, 126) -> width: 95, height: 98
-                        base_x, base_y = 15 + x_offset, 28 + y_offset
+                        # Base coordinates adjusted per user request:
+                        # Move left 4px (15 -> 11)
+                        # Move 0.5px (assumed Y adjustment 28 -> 28.5)
+                        base_x, base_y = 11 + x_offset, 28.5 + y_offset
                         base_w, base_h = 95 * scale, 98 * scale
                         
                         # Center the scaled image within the movement
@@ -270,9 +170,9 @@ def render():
                             page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
                             
                             
-                            # Address: Centered horizontally, moved down 3px (173 -> 176)
+                            # Address: Centered horizontally, moved up 2px (176 -> 174)
                             # Using insert_textbox with align=1 (Center) matches the requirement
-                            addr_rect = fitz.Rect(0, 176, page1.rect.width, page1.rect.height)
+                            addr_rect = fitz.Rect(0, 174, page1.rect.width, page1.rect.height)
                             page1.insert_textbox(addr_rect, office_address, fontsize=6.5, fontname=get_font("ru-reg"), color=white_text, align=1)
                         
                         # Preview
