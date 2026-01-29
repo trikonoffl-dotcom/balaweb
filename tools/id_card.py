@@ -108,31 +108,30 @@ def render():
                         white_text = (1, 1, 1)
                         
                         # Text Insertion (Coordinates from sample analysis)
-                        # Name
-                        page.insert_text((14.8, 147.6), first_name.upper(), fontsize=15, fontname="pop-bold", color=blue_text)
-                        page.insert_text((15.0, 168.7), last_name.upper(), fontsize=11, fontname="pop-reg", color=blue_text)
+                        # Name - Using slightly smaller fonts to avoid overflow and clashing with photo
+                        page.insert_text((14.8, 150), first_name.upper(), fontsize=14, fontname="pop-bold", color=blue_text)
+                        page.insert_text((15.0, 170), last_name.upper(), fontsize=10, fontname="pop-reg", color=blue_text)
                         
                         # Title
-                        page.insert_text((15.5, 183.8), title, fontsize=8, fontname="pop-reg", color=blue_text)
+                        page.insert_text((15.5, 185), title, fontsize=8, fontname="pop-reg", color=blue_text)
                         
                         # DOI
                         date_str = doj.strftime("%d-%m-%Y")
-                        page.insert_text((15.1, 197.3), f"D.O.J:  {date_str}", fontsize=8, fontname="pop-bold", color=blue_text)
+                        page.insert_text((15.1, 198), f"D.O.J:  {date_str}", fontsize=8, fontname="pop-bold", color=blue_text)
                         
                         # ID Number (Bottom White Text)
                         page.insert_text((15.6, 226.3), f"ID Number: {id_number}", fontsize=10, fontname="pop-reg", color=white_text)
                         
                         # Photo Placement
-                        # Based on analysis of the original sample (sundararajan):
-                        # The primary photo sits at y=27 to y=147 (just above the name).
-                        # Using a slightly wider rect for better centering with background removal.
-                        photo_rect = fitz.Rect(-15, 20, 120, 147)
+                        # User Request: Reduced size and sit exactly on the line above the name
+                        # Setting bottom y to 128 (Name top is approx 136)
+                        # Setting top y to 35, and narrowing the width for a sharper look
+                        photo_rect = fitz.Rect(15, 30, 110, 128)
                         
-                        # Process image to ensure it fills the space correctly (Center-Crop)
+                        # Process image to ensure it fills the space correctly
                         img = Image.open(io.BytesIO(processed_photo))
                         
-                        # We want to maintain aspect ratio while filling the height (147 - 20 = 127)
-                        # We'll use fit to cover the rect while maintaining ratio
+                        # Maintain aspect ratio while filling the height (128 - 30 = 98)
                         img_byte_arr = io.BytesIO()
                         img.save(img_byte_arr, format='PNG')
                         final_photo_bytes = img_byte_arr.getvalue()
