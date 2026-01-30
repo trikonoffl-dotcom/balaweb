@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+pymupdf>=1.23.0
+Pillow>=10.0.0
+rembg[cpu]
+opencv-python-headless
+numpy<2.0.0
+supabase>=2.3.0
+qrcode>=7.4.2
+onnxruntime
+requests
+pandas>=2.0.0
