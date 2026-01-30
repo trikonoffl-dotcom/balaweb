@@ -76,14 +76,8 @@ export default function BusinessCardPage() {
         }
     }
 
-    // Debounced Preview
-    useEffect(() => {
-        if (timeoutRef.current) clearTimeout(timeoutRef.current)
-        timeoutRef.current = setTimeout(() => {
-            fetchPreview()
-        }, 800)
-        return () => clearTimeout(timeoutRef.current!)
-    }, [formData])
+    // Debounced Preview removed - User must click button manually
+
 
     const fetchPreview = async () => {
         setLoading(true)

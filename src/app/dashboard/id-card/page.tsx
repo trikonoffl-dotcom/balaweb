@@ -57,20 +57,9 @@ export default function IDCardPage() {
         }
     }
 
-    // Debounced Preview Update
-    useEffect(() => {
-        if (!file) return;
+    // Auto-preview removed as per user request
+    // User must click "Generate Preview" button
 
-        if (timeoutRef.current) clearTimeout(timeoutRef.current)
-
-        timeoutRef.current = setTimeout(() => {
-            fetchPreview()
-        }, 800) // Debounce 800ms
-
-        return () => {
-            if (timeoutRef.current) clearTimeout(timeoutRef.current)
-        }
-    }, [formData, file])
 
     const fetchPreview = async () => {
         if (!file) return

@@ -166,7 +166,7 @@ async def api_preview_business_card(
     data = locals()
     del data["template"]
     
-    img_bytes = generate_business_card_preview(template, data)
+    img_bytes = await run_in_threadpool(generate_business_card_preview, template, data)
     
     if img_bytes:
          return Response(content=img_bytes, media_type="image/png")
@@ -189,7 +189,7 @@ async def api_generate_business_card(
     data = locals()
     del data["template"]
     
-    pdf_bytes = generate_business_card_pdf(template, data)
+    pdf_bytes = await run_in_threadpool(generate_business_card_pdf, template, data)
     
     if pdf_bytes:
          return Response(content=pdf_bytes, media_type="application/pdf", headers={"Content-Disposition": f"attachment; filename=BusinessCard_{first_name}.pdf"})
