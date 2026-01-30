@@ -3,15 +3,16 @@
 import { Header } from "@/components/ui/header"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, CreditCard, Ship, Settings, LogOut } from "lucide-react"
+import { IconLayoutDashboard, IconId, IconShip, IconBusinessplan, IconSettings, IconLogout, IconPhotoEdit } from "@tabler/icons-react"
 import { cn } from "@/lib/utils"
 
 const sidebarItems = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "ID Card", href: "/dashboard/id-card", icon: CreditCard },
-    { name: "Welcome Aboard", href: "/dashboard/welcome", icon: Ship },
-    { name: "Business Card", href: "/dashboard/business-card", icon: Users },
-    { name: "Settings", href: "/dashboard/settings", icon: Settings },
+    { name: "Dashboard", href: "/dashboard", icon: IconLayoutDashboard },
+    { name: "ID Card", href: "/dashboard/id-card", icon: IconId },
+    { name: "Welcome Aboard", href: "/dashboard/welcome", icon: IconShip },
+    { name: "Business Card", href: "/dashboard/business-card", icon: IconBusinessplan },
+    { name: "AI BG Remover", href: "/dashboard/bg-remover", icon: IconPhotoEdit },
+    { name: "Settings", href: "/dashboard/settings", icon: IconSettings },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -45,7 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </nav>
                     <div className="p-4 border-t mt-auto">
                         <Link href="/login" className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50">
-                            <LogOut className="h-4 w-4" />
+                            <IconLogout className="h-4 w-4" />
                             Logout
                         </Link>
                     </div>
