@@ -1,5 +1,4 @@
 import numpy as np
-import streamlit as st
 
 def remove_background(image_bytes):
     """Local background removal using rembg."""
