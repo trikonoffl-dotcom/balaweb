@@ -67,9 +67,10 @@ def generate_business_card_pdf(template_style, data):
              font_base = base_dir # Fallback to relative parent
 
         if template_style == "Trikon":
-            font_reg = os.path.join(font_base, "fonts", "Poppins", "Poppins-Regular.ttf")
-            font_bold = os.path.join(font_base, "fonts", "Poppins", "Poppins-Bold.ttf")
-            font_med = os.path.join(font_base, "fonts", "Poppins", "Poppins-Medium.ttf")
+            font_reg = os.path.join(font_base, "Poppins", "Poppins-Regular.ttf")
+            font_bold = os.path.join(font_base, "Poppins", "Poppins-Bold.ttf")
+            font_med = os.path.join(font_base, "Poppins", "Poppins-Medium.ttf")
+            font_light = os.path.join(font_base, "Poppins", "Poppins-Light.ttf")
             
             # Load Fonts
             try:
@@ -84,14 +85,27 @@ def generate_business_card_pdf(template_style, data):
                  with open(font_med, "rb") as f: fb_med = f.read()
                  ret = page.insert_font(fontname="pop-med", fontbuffer=fb_med)
                  t_med_name = ret if isinstance(ret, str) else "pop-med"
+
+                 with open(font_light, "rb") as f: fb_light = f.read()
+                 ret = page.insert_font(fontname="pop-light", fontbuffer=fb_light)
+                 t_light_name = ret if isinstance(ret, str) else "pop-light"
             except Exception as e:
                 # Fallback to helv if fonts missing
                 t_reg_name = "helv"
                 t_bold_name = "helv"
                 t_med_name = "helv"
+                t_light_name = "helv"
 
-            # Insert Text
-            page.insert_text((21.15, 26), f"{data['first_name']} {data['last_name']}".upper(), fontsize=11, fontname=t_bold_name, color=text_color)
+            # Insert Text - Split names for style difference
+            first_name_upper = data['first_name'].upper()
+            last_name_upper = data['last_name'].upper()
+            
+            # Calculate width of first name to place last name after it
+            f_size = 11
+            first_w = fitz.get_text_length(first_name_upper + " ", fontname=t_bold_name, fontsize=f_size)
+            
+            page.insert_text((21.15, 26), first_name_upper, fontsize=f_size, fontname=t_bold_name, color=text_color)
+            page.insert_text((21.15 + first_w, 26), last_name_upper, fontsize=f_size, fontname=t_light_name, color=text_color)
             page.insert_text((21.15, 36), data['title'], fontsize=6, fontname=t_reg_name, color=text_color)
             
             page.insert_text((34, 56), data['address_line1'], fontsize=6, fontname=t_med_name, color=text_color)
@@ -111,9 +125,9 @@ def generate_business_card_pdf(template_style, data):
             page.insert_image(qr_rect, stream=create_vcard_qr(data))
         
         elif template_style == "Metaweb":
-            font_reg = os.path.join(font_base, "fonts", "Montserrat", "static", "Montserrat-Regular.ttf")
-            font_bold = os.path.join(font_base, "fonts", "Montserrat", "static", "Montserrat-Bold.ttf")
-            font_semi = os.path.join(font_base, "fonts", "Montserrat", "static", "Montserrat-SemiBold.ttf")
+            font_reg = os.path.join(font_base, "Montserrat", "static", "Montserrat-Regular.ttf")
+            font_bold = os.path.join(font_base, "Montserrat", "static", "Montserrat-Bold.ttf")
+            font_light = os.path.join(font_base, "Montserrat", "static", "Montserrat-Light.ttf")
 
             try:
                 ret = page.insert_font(fontname="mont-reg", fontfile=font_reg)
@@ -121,17 +135,21 @@ def generate_business_card_pdf(template_style, data):
                 
                 ret = page.insert_font(fontname="mont-bold", fontfile=font_bold)
                 f_bold_name = ret if isinstance(ret, str) else "mont-bold"
+
+                ret = page.insert_font(fontname="mont-light", fontfile=font_light)
+                f_light_name = ret if isinstance(ret, str) else "mont-light"
                 
                 # Manual width calc fallback if font obj fails
-                firstname_width = len(data['first_name']) * 7 # approx
+                firstname_width = fitz.get_text_length(data['first_name'] + " ", fontname=f_bold_name, fontsize=12)
                 
             except:
                 f_reg_name = "helv"
                 f_bold_name = "helv"
+                f_light_name = "helv"
                 firstname_width = len(data['first_name']) * 7
 
             page.insert_text((18, 38), f"{data['first_name']}", fontsize=12, fontname=f_bold_name, color=text_color) 
-            page.insert_text((18 + firstname_width + 4, 38), f"{data['last_name']}", fontsize=12, fontname=f_reg_name, color=text_color)
+            page.insert_text((18 + firstname_width, 38), f"{data['last_name']}", fontsize=12, fontname=f_light_name, color=text_color)
             
             page.insert_text((19, 50), data['title'], fontsize=6, fontname=f_reg_name, color=text_color)
             

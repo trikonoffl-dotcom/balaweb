@@ -1,24 +1,6 @@
-'use client'
+import { Checkbox } from "@/components/ui/checkbox"
 
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2, Plus, Trash2 } from 'lucide-react'
-
-// Simple Hash (Client-side for migration compatibility - NOT SECURE for production apps)
-async function hashPassword(password: string) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
+const ALL_TOOLS = ["Dashboard", "ID Card", "Welcome Aboard", "Business Card", "AI BG Remover"]
 
 export default function SettingsPage() {
     const supabase = createClient()
@@ -26,6 +8,9 @@ export default function SettingsPage() {
     const [loading, setLoading] = useState(true)
     const [open, setOpen] = useState(false)
     const [creating, setCreating] = useState(false)
+    const [accessOpen, setAccessOpen] = useState(false)
+    const [selectedUser, setSelectedUser] = useState<any>(null)
+    const [updatingAccess, setUpdatingAccess] = useState(false)
 
     // New User State
     const [newUser, setNewUser] = useState({
@@ -55,7 +40,7 @@ export default function SettingsPage() {
                 email: newUser.email,
                 password_hash: hash,
                 role: newUser.role,
-                allowed_tools: ["Dashboard", "ID Card", "Welcome Aboard", "Business Card"] // Default all for now
+                allowed_tools: ALL_TOOLS // Default all for new users
             })
 
             if (!error) {
@@ -72,11 +57,64 @@ export default function SettingsPage() {
         }
     }
 
-    // Note: Delete/Edit not requested but good to have. Keeping it simple for now.
+    const handleUpdateAccess = async () => {
+        if (!selectedUser) return
+        setUpdatingAccess(true)
+
+        try {
+            const { error } = await supabase
+                .from('users')
+                .update({ allowed_tools: selectedUser.allowed_tools })
+                .eq('id', selectedUser.id)
+
+            if (!error) {
+                setAccessOpen(false)
+                fetchUsers()
+            }
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setUpdatingAccess(false)
+        }
+    }
+
+    const toggleTool = (tool: string) => {
+        if (!selectedUser) return
+        const current = selectedUser.allowed_tools || []
+        const next = current.includes(tool)
+            ? current.filter((t: string) => t !== tool)
+            : [...current, tool]
+        setSelectedUser({ ...selectedUser, allowed_tools: next })
+    }
 
     return (
         <div className="container mx-auto p-6 max-w-6xl">
             <h1 className="text-3xl font-bold mb-6">Settings</h1>
+
+            {/* User Access Dialog */}
+            <Dialog open={accessOpen} onOpenChange={setAccessOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Manage Access: {selectedUser?.email}</DialogTitle>
+                        <CardDescription>Select which tools this user can access.</CardDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-4">
+                        {ALL_TOOLS.map(tool => (
+                            <div key={tool} className="flex items-center space-x-3">
+                                <Checkbox
+                                    id={tool}
+                                    checked={selectedUser?.allowed_tools?.includes(tool)}
+                                    onCheckedChange={() => toggleTool(tool)}
+                                />
+                                <Label htmlFor={tool} className="cursor-pointer">{tool}</Label>
+                            </div>
+                        ))}
+                    </div>
+                    <Button className="w-full" onClick={handleUpdateAccess} disabled={updatingAccess}>
+                        {updatingAccess ? <Loader2 className="animate-spin h-4 w-4" /> : "Save Changes"}
+                    </Button>
+                </DialogContent>
+            </Dialog>
 
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
@@ -127,7 +165,7 @@ export default function SettingsPage() {
                                 <TableRow>
                                     <TableHead>Email</TableHead>
                                     <TableHead>Role</TableHead>
-                                    <TableHead>Created At</TableHead>
+                                    <TableHead>Allowed Tools</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -140,11 +178,39 @@ export default function SettingsPage() {
                                                 {user.role}
                                             </span>
                                         </TableCell>
-                                        <TableCell className="text-gray-500 text-sm">
-                                            {new Date(user.created_at).toLocaleDateString()}
+                                        <TableCell>
+                                            <div className="flex flex-wrap gap-1 max-w-[300px]">
+                                                {user.role === 'admin' ? (
+                                                    <span className="text-xs text-gray-400">All Tools</span>
+                                                ) : (
+                                                    user.allowed_tools?.map((t: string) => (
+                                                        <span key={t} className="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-tight border border-blue-100">
+                                                            {t}
+                                                        </span>
+                                                    ))
+                                                )}
+                                            </div>
                                         </TableCell>
-                                        <TableCell className="text-right">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50">
+                                        <TableCell className="text-right flex items-center justify-end gap-2">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => { setSelectedUser(user); setAccessOpen(true); }}
+                                                disabled={user.role === 'admin'}
+                                            >
+                                                Edit Access
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                onClick={async () => {
+                                                    if (confirm("Are you sure?")) {
+                                                        await supabase.from('users').delete().eq('id', user.id)
+                                                        fetchUsers()
+                                                    }
+                                                }}
+                                            >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </TableCell>
