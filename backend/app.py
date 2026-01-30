@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, Form, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.concurrency import run_in_threadpool
 from typing import Optional
 import sys
 import os
@@ -31,7 +32,8 @@ def health_check():
 @app.post("/api/remove-bg")
 async def api_remove_bg(file: UploadFile = File(...)):
     contents = await file.read()
-    processed = remove_background(contents)
+    # Offload heavy ML task to threadpool
+    processed = await run_in_threadpool(remove_background, contents)
     if processed:
         return Response(content=processed, media_type="image/png")
     return {"status": "error", "message": "Failed to process"}
@@ -40,9 +42,9 @@ async def api_remove_bg(file: UploadFile = File(...)):
 async def api_auto_crop(file: UploadFile = File(...), type: str = Form("id_card")):
     contents = await file.read()
     if type == "welcome":
-        processed = smart_crop_welcome(contents)
+        processed = await run_in_threadpool(smart_crop_welcome, contents)
     else:
-        processed = auto_crop_face(contents)
+        processed = await run_in_threadpool(auto_crop_face, contents)
     
     return Response(content=processed, media_type="image/png")
 
@@ -66,10 +68,12 @@ async def api_preview_id_card(
     contents = await file.read()
     
     if use_auto_crop:
-        contents = auto_crop_face(contents)
+        contents = await run_in_threadpool(auto_crop_face, contents)
     
     if use_ai_removal:
-         contents = remove_background(contents) or contents
+         # Note: bg removal returns png bytes
+         processed = await run_in_threadpool(remove_background, contents)
+         contents = processed or contents
 
     preview_bytes = generate_id_card_preview(
         first_name, last_name, title, id_number, doj,
@@ -103,11 +107,12 @@ async def api_generate_id_card(
     
     # Pre-processing pipeline
     if use_auto_crop:
-        contents = auto_crop_face(contents)
+        contents = await run_in_threadpool(auto_crop_face, contents)
     
     if use_ai_removal:
          # Note: bg removal returns png bytes
-         contents = remove_background(contents) or contents # Fallback if fail
+         processed = await run_in_threadpool(remove_background, contents)
+         contents = processed or contents # Fallback if fail
 
     # Generate PDF
     pdf_bytes = generate_id_card_pdf(
@@ -133,7 +138,7 @@ async def api_generate_welcome(
     contents = await file.read()
     
     if use_auto_crop:
-        contents = smart_crop_welcome(contents)
+        contents = await run_in_threadpool(smart_crop_welcome, contents)
         
     date_obj = datetime.datetime.strptime(doj, "%Y-%m-%d")
     

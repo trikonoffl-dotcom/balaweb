@@ -1,10 +1,45 @@
 import numpy as np
+from PIL import Image
+import io
+
+def resize_image_bytes(image_bytes, max_width=1024):
+    """
+    Resizes image bytes to a maximum width to speed up processing.
+    Returns bytes.
+    """
+    try:
+        image = Image.open(io.BytesIO(image_bytes))
+        
+        # Calculate new dimensions
+        width, height = image.size
+        if width > max_width:
+            ratio = max_width / width
+            new_height = int(height * ratio)
+            image = image.resize((max_width, new_height), Image.Resampling.LANCZOS)
+            
+            # Save back to bytes
+            buf = io.BytesIO()
+            # Convert to RGB if necessary (e.g. for JPEG saving) BUT we want to keep transparency if PNG
+            if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
+                 format = "PNG"
+            else:
+                 format = "JPEG"
+                 
+            image.save(buf, format=format, quality=85)
+            return buf.getvalue()
+        
+        return image_bytes
+    except Exception as e:
+        print(f"Resize failed: {e}")
+        return image_bytes
 
 def remove_background(image_bytes):
     """Local background removal using rembg."""
     from rembg import remove
     try:
-        return remove(image_bytes)
+        # Optimize: Resize before processing
+        optimized_bytes = resize_image_bytes(image_bytes, max_width=1000)
+        return remove(optimized_bytes)
     except Exception as e:
         print(f"Local background removal failed: {e}")
         return None
@@ -21,6 +56,10 @@ def auto_crop_face(image_bytes):
     """
     try:
         import cv2
+        
+        # Optimize: Resize first
+        image_bytes = resize_image_bytes(image_bytes, max_width=1024)
+        
         # Convert bytes to numpy array
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -80,6 +119,10 @@ def smart_crop_welcome(image_bytes):
     """
     try:
         import cv2
+        
+        # Optimize: Resize first
+        image_bytes = resize_image_bytes(image_bytes, max_width=1024)
+        
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         
