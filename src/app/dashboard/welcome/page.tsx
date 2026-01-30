@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { getApiUrl } from '@/lib/api'
-import { Loader2, Download, RefreshCw } from 'lucide-react'
+import { Loader2, Download, RefreshCw, Image as ImageIcon } from 'lucide-react'
 
 export default function WelcomePage() {
     const [file, setFile] = useState<File | null>(null)
@@ -95,13 +95,18 @@ export default function WelcomePage() {
 
                             <div className="space-y-2 pt-4 border-t">
                                 <Label>Profile Photo</Label>
-                                <Input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        if (e.target.files?.[0]) setFile(e.target.files[0])
-                                    }}
-                                />
+                                <div className="space-y-1">
+                                    <Input
+                                        type="file"
+                                        accept=".jpg,.jpeg,.png,.webp,.avif"
+                                        onChange={(e) => {
+                                            if (e.target.files?.[0]) setFile(e.target.files[0])
+                                        }}
+                                    />
+                                    <p className="text-[10px] text-muted-foreground px-1">
+                                        Supported: JPG, PNG, WebP, AVIF
+                                    </p>
+                                </div>
                                 <div className="flex items-center space-x-2 pt-2">
                                     <Checkbox
                                         id="auto_crop"
@@ -140,8 +145,8 @@ export default function WelcomePage() {
                                 </div>
                             ) : (
                                 <div className="text-gray-400 text-sm flex flex-col items-center">
-                                    <RefreshCw className="h-8 w-8 mb-2 opacity-20" />
-                                    Result will appear here
+                                    <ImageIcon className="h-8 w-8 mb-2 opacity-20" />
+                                    Click "Generate Welcome Image" to see result
                                 </div>
                             )}
                         </CardContent>

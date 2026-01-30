@@ -82,12 +82,14 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <Card className="w-full max-w-md shadow-lg border-0">
                 <CardHeader className="space-y-1 flex flex-col items-center pb-2">
-                    <div className="w-12 h-12 relative mb-4">
-                        {/* Placeholder for Logo - You can add the logo asset later */}
-                        <div className="absolute inset-0 bg-blue-600 rounded-xl opacity-20 transform rotate-6"></div>
-                        <div className="absolute inset-0 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
-                            T
-                        </div>
+                    <div className="w-48 h-16 relative mb-4">
+                        <Image
+                            src="/trikon_logo.png"
+                            alt="Trikon Logo"
+                            fill
+                            className="object-contain"
+                            priority
+                        />
                     </div>
                     <CardTitle className="text-2xl font-bold tracking-tight text-center">
                         Welcome back

@@ -36,8 +36,16 @@ export default function BgRemoverPage() {
             })
 
             if (res.ok) {
-                const blob = await res.blob()
-                setProcessedUrl(URL.createObjectURL(blob))
+                const contentType = res.headers.get('content-type')
+                if (contentType && contentType.includes('image')) {
+                    const blob = await res.blob()
+                    setProcessedUrl(URL.createObjectURL(blob))
+                } else {
+                    const errorData = await res.json()
+                    alert("Processing Error: " + (errorData.error || "Unknown error"))
+                }
+            } else {
+                alert("Server Error: Failed to remove background")
             }
         } catch (e) {
             console.error("BG Removal failed", e)
@@ -67,39 +75,38 @@ export default function BgRemoverPage() {
                         <CardTitle>Upload Image</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center hover:bg-gray-50 transition-colors">
+                        <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center hover:bg-gray-50 transition-colors bg-white">
                             <Input
                                 type="file"
-                                accept="image/*"
+                                accept=".jpg,.jpeg,.png,.webp,.avif"
                                 className="hidden"
                                 id="image-upload"
                                 onChange={handleFileChange}
                             />
                             <label htmlFor="image-upload" className="cursor-pointer flex flex-col items-center">
-                                <Upload className="h-10 w-10 text-gray-400 mb-2" />
-                                <span className="text-sm text-gray-600 font-medium">Click to upload image</span>
-                                <span className="text-xs text-gray-400 mt-1">JPG, PNG up to 5MB</span>
+                                <Upload className="h-10 w-10 text-blue-500 mb-2 opacity-80" />
+                                <span className="text-sm text-gray-700 font-semibold uppercase tracking-wide">Select Original Image</span>
+                                <span className="text-xs text-gray-400 mt-1">PNG, JPG, WebP or AVIF</span>
                             </label>
                         </div>
 
                         {previewUrl && (
-                            <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                            <div className="relative aspect-video bg-white rounded-lg overflow-hidden border border-gray-100 shadow-inner">
                                 <img src={previewUrl} alt="Original" className="object-contain w-full h-full" />
                             </div>
                         )}
 
                         <Button
-                            className="w-full"
+                            className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-md font-bold"
                             onClick={handleRemoveBg}
                             disabled={!file || loading}
-                            size="lg"
                         >
                             {loading ? (
                                 <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processing AI...
                                 </>
                             ) : (
-                                "Remove Background"
+                                "Process Background Removal"
                             )}
                         </Button>
                     </CardContent>

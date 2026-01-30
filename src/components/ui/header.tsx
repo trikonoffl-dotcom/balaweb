@@ -12,6 +12,7 @@ export function Header() {
                             src="/trikon_logo.png"
                             alt="Trikon Logo"
                             fill
+                            sizes="(max-width: 768px) 100vw, 128px"
                             className="object-contain object-left"
                             priority
                         />
@@ -19,7 +20,6 @@ export function Header() {
                 </Link>
                 <div className="ml-auto flex items-center space-x-4">
                     <BackendStatus />
-                    <span className="text-sm text-gray-500">v2.1 (Cloudflare)</span>
                 </div>
             </div>
         </header>

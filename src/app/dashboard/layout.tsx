@@ -4,7 +4,7 @@ import { Header } from "@/components/ui/header"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
-import { IconLayoutDashboard, IconId, IconShip, IconBusinessplan, IconSettings, IconLogout, IconPhotoEdit } from "@tabler/icons-react"
+import { IconLayoutDashboard, IconId, IconShip, IconBusinessplan, IconSettings, IconLogout, IconPhotoEdit, IconUsers } from "@tabler/icons-react"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getCurrentUser } from "@/lib/auth"
@@ -15,15 +15,18 @@ const sidebarItems = [
     { name: "Welcome Aboard", href: "/dashboard/welcome", icon: IconShip },
     { name: "Business Card", href: "/dashboard/business-card", icon: IconBusinessplan },
     { name: "AI BG Remover", href: "/dashboard/bg-remover", icon: IconPhotoEdit },
+    { name: "Human Resource", href: "/dashboard/hr", icon: IconUsers },
     { name: "Settings", href: "/dashboard/settings", icon: IconSettings },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
+    const [hasMounted, setHasMounted] = useState(false)
     const [user, setUser] = useState<any>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        setHasMounted(true)
         const fetchUser = async () => {
             const profile = await getCurrentUser()
             setUser(profile)
@@ -36,6 +39,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         if (!user) return false
         if (user.role === 'admin') return true
 
+        // Dashboard is always visible
+        if (item.name === "Dashboard") return true
+
         // Settings only for Admins
         if (item.name === "Settings") return false
 
@@ -47,12 +53,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         return false
     })
 
+    useEffect(() => {
+        if (!loading && user && pathname !== '/dashboard') {
+            // Security Check: Is the current path authorized?
+            const isAuthorized = filteredItems.some(item => item.href === pathname)
+
+            // If user is a member and trying to access an unauthorized tool, redirect
+            if (user.role !== 'admin' && !isAuthorized) {
+                console.warn(`Unauthorized access attempt to ${pathname}. Redirecting to dashboard.`)
+                window.location.href = '/dashboard'
+            }
+        }
+    }, [pathname, user, loading, filteredItems])
+
+    const isAuthorized = user?.role === 'admin' || pathname === '/dashboard' || filteredItems.some(item => item.href === pathname)
+
+    if (!hasMounted) return null
+
     if (loading) {
+        return <div className="min-h-screen flex items-center justify-center bg-gray-50" suppressHydrationWarning><Loader2 className="animate-spin text-blue-600" /></div>
+    }
+
+    // Prevent flash of unauthorized content during redirect
+    if (!isAuthorized && pathname !== '/dashboard') {
         return <div className="min-h-screen flex items-center justify-center bg-gray-50"><Loader2 className="animate-spin text-blue-600" /></div>
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="min-h-screen flex flex-col bg-gray-50" suppressHydrationWarning>
             <Header />
             <div className="flex flex-1">
                 {/* Sidebar */}

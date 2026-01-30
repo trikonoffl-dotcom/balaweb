@@ -12,7 +12,7 @@ export function BackendStatus() {
         setStatus('checking')
         const start = Date.now()
         try {
-            const res = await fetch(getApiUrl('/health'))
+            const res = await fetch(getApiUrl('/api/health'))
             if (res.ok) {
                 setStatus('connected')
                 setLatency(Date.now() - start)
@@ -35,8 +35,8 @@ export function BackendStatus() {
         <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 text-sm">
                 <span className={`h-2.5 w-2.5 rounded-full ${status === 'connected' ? 'bg-green-500' :
-                        status === 'error' ? 'bg-red-500' :
-                            status === 'checking' ? 'bg-yellow-500 animate-pulse' : 'bg-gray-300'
+                    status === 'error' ? 'bg-red-500' :
+                        status === 'checking' ? 'bg-yellow-500 animate-pulse' : 'bg-gray-300'
                     }`} />
                 <span className={status === 'error' ? 'text-red-600 font-medium' : 'text-gray-600'}>
                     {status === 'idle' && 'Backend Idle'}

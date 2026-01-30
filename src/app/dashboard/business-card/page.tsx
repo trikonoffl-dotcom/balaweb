@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getApiUrl } from '@/lib/api'
-import { Loader2, Download, RefreshCw } from 'lucide-react'
+import { Loader2, Download, RefreshCw, Image as ImageIcon } from 'lucide-react'
 
 // Office Addresses
 const ADDRESSES = [
@@ -222,12 +222,28 @@ export default function BusinessCardPage() {
                                 <img src={previewUrl} alt="Card Preview" className="max-w-full h-auto shadow-xl rounded" />
                             ) : (
                                 <div className="text-gray-400 text-sm flex flex-col items-center">
-                                    <RefreshCw className="h-8 w-8 mb-2 opacity-20" />
-                                    Generating Preview...
+                                    <ImageIcon className="h-8 w-8 mb-2 opacity-20" />
+                                    Click "Generate Preview" to see card
                                 </div>
                             )}
                         </CardContent>
-                        <div className="p-4 border-t bg-white rounded-b-lg">
+                        <div className="p-4 border-t bg-white rounded-b-lg space-y-3">
+                            <Button
+                                className="w-full bg-slate-800 hover:bg-slate-900"
+                                onClick={fetchPreview}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...
+                                    </>
+                                ) : (
+                                    <>
+                                        <RefreshCw className="mr-2 h-4 w-4" /> Generate Preview
+                                    </>
+                                )}
+                            </Button>
+
                             <Button className="w-full" onClick={handleDownload} disabled={generating}>
                                 {generating ? (
                                     <>

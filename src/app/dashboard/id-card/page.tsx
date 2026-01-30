@@ -11,7 +11,7 @@ import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { getApiUrl } from '@/lib/api'
-import { Loader2, Download, RefreshCw } from 'lucide-react'
+import { Loader2, Download, RefreshCw, Image as ImageIcon } from 'lucide-react'
 
 // Office Addresses (Moved from Python)
 const OFFICES = {
@@ -167,15 +167,20 @@ export default function IDCardPage() {
                             <CardTitle>Photo & Adjustments</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <Input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    if (e.target.files?.[0]) {
-                                        setFile(e.target.files[0])
-                                    }
-                                }}
-                            />
+                            <div className="space-y-1">
+                                <Input
+                                    type="file"
+                                    accept=".jpg,.jpeg,.png,.webp,.avif"
+                                    onChange={(e) => {
+                                        if (e.target.files?.[0]) {
+                                            setFile(e.target.files[0])
+                                        }
+                                    }}
+                                />
+                                <p className="text-[10px] text-muted-foreground px-1">
+                                    Supported: JPG, PNG, WebP, AVIF
+                                </p>
+                            </div>
 
                             <div className="flex items-center space-x-4">
                                 <div className="flex items-center space-x-2">
@@ -248,12 +253,28 @@ export default function IDCardPage() {
                                 <img src={previewUrl} alt="ID Preview" className="max-w-full h-auto shadow-xl rounded-lg" />
                             ) : (
                                 <div className="text-gray-400 text-sm flex flex-col items-center">
-                                    <RefreshCw className="h-8 w-8 mb-2 opacity-20" />
-                                    Upload photo to see preview
+                                    <ImageIcon className="h-8 w-8 mb-2 opacity-20" />
+                                    Click "Generate Preview" to see ID card
                                 </div>
                             )}
                         </CardContent>
-                        <div className="p-4 border-t bg-white rounded-b-lg">
+                        <div className="p-4 border-t bg-white rounded-b-lg space-y-3">
+                            <Button
+                                className="w-full bg-slate-800 hover:bg-slate-900"
+                                onClick={fetchPreview}
+                                disabled={!file || loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Preview...
+                                    </>
+                                ) : (
+                                    <>
+                                        <RefreshCw className="mr-2 h-4 w-4" /> Generate Preview
+                                    </>
+                                )}
+                            </Button>
+
                             <Button className="w-full" onClick={handleDownload} disabled={!file || generating}>
                                 {generating ? (
                                     <>

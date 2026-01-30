@@ -3,6 +3,7 @@ import os
 import io
 import datetime
 from PIL import Image, ImageDraw, ImageOps
+from utils.settings_manager import load_settings, resolve_asset_path
 
 def get_date_suffix(day):
     if 4 <= day <= 20 or 24 <= day <= 30:
@@ -26,15 +27,17 @@ def generate_welcome_image(
     try:
         current_dir = os.path.dirname(os.path.abspath(__file__))
         
+        settings = load_settings().get("welcome_aboard", {})
+        
         # Locate Template
-        possible_paths = [
-            os.path.join(current_dir, "..", "Templates", "welcome aboard - Without name.pdf"),
-            r"C:\Users\pabal\Documents\Businesscard\Templates\welcome aboard - Without name.pdf"
-        ]
-        template_path = next((p for p in possible_paths if os.path.exists(p)), None)
+        template_val = settings.get("template_path", "welcome aboard - Without name.pdf")
+        template_path = resolve_asset_path(template_val, category="template")
         
         if not template_path:
-            raise FileNotFoundError("Welcome Template not found.")
+            template_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Templates", "welcome aboard - Without name.pdf")
+            
+        if not os.path.exists(template_path):
+            raise FileNotFoundError(f"Welcome Template not found: {template_val}")
 
         doc = fitz.open(template_path)
         page = doc[0]
@@ -56,9 +59,10 @@ def generate_welcome_image(
         text_color = (1, 1, 1)
 
         # Photo
-        user_x, user_y = 71, 340
-        user_w, user_h = 421.978, 502.045
-        user_r = 28.492
+        p_settings = settings.get("photo_rect", [71, 340, 421.978, 502.045, 28.492])
+        user_x, user_y = p_settings[0], p_settings[1]
+        user_w, user_h = p_settings[2], p_settings[3]
+        user_r = p_settings[4] if len(p_settings) > 4 else 28.492
         
         original_img = Image.open(io.BytesIO(photo_bytes))
         rounded_img = make_rounded(original_img, user_w, user_h, user_r)
@@ -79,10 +83,10 @@ def generate_welcome_image(
         light_font = "pop-light" if os.path.exists(font_light) else "helv"
         reg_font = "pop-reg" if os.path.exists(font_reg) else "helv"
 
-        page.insert_text((563, 500), first_name, fontsize=77, fontname=bold_font, color=text_color)
-        page.insert_text((563, 580), last_name, fontsize=77, fontname=light_font, color=text_color)
-        page.insert_text((563, 640), title, fontsize=25, fontname=reg_font, color=text_color)
-        page.insert_text((563, 700), date_str, fontsize=26, fontname=bold_font, color=text_color)
+        page.insert_text(settings.get("first_name_pos", (563, 500)), first_name, fontsize=77, fontname=bold_font, color=text_color)
+        page.insert_text(settings.get("last_name_pos", (563, 580)), last_name, fontsize=77, fontname=light_font, color=text_color)
+        page.insert_text(settings.get("title_pos", (563, 640)), title, fontsize=25, fontname=reg_font, color=text_color)
+        page.insert_text(settings.get("date_pos", (563, 700)), date_str, fontsize=26, fontname=bold_font, color=text_color)
         
         pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
         return pix.tobytes("jpg")
