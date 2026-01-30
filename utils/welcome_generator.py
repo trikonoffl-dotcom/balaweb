@@ -39,25 +39,18 @@ def generate_welcome_image(
         doc = fitz.open(template_path)
         page = doc[0]
         
-        # Font Setup
-        font_base = os.path.join(current_dir, "..")
-        if not os.path.exists(os.path.join(font_base, "fonts", "Poppins")):
-            # Try alt path
-            font_base = r"C:\Users\pabal\Documents\Businesscard"
-            
-        font_bold = os.path.join(font_base, "fonts", "Poppins", "Poppins-Bold.ttf")
-        font_reg = os.path.join(font_base, "fonts", "Poppins", "Poppins-Regular.ttf")
+        # Font Setup - Use Rubik as Poppins is missing or problematic
+        font_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "fonts", "Rubik", "static")
         
-        # Fallback to absolute if relative fails
-        if not os.path.exists(font_bold):
-             font_bold = r"C:\Users\pabal\Documents\Businesscard\fonts\Poppins\Poppins-Bold.ttf"
-             font_reg = r"C:\Users\pabal\Documents\Businesscard\fonts\Poppins\Poppins-Regular.ttf"
+        font_bold = os.path.join(font_dir, "Rubik-Bold.ttf")
+        font_light = os.path.join(font_dir, "Rubik-Light.ttf")
+        font_reg = os.path.join(font_dir, "Rubik-Regular.ttf")
 
         if os.path.exists(font_bold):
             page.insert_font(fontname="pop-bold", fontfile=font_bold)
+            page.insert_font(fontname="pop-light", fontfile=font_light)
             page.insert_font(fontname="pop-reg", fontfile=font_reg)
         else:
-             # Just use default if missing
              pass
         
         text_color = (1, 1, 1)
@@ -83,10 +76,11 @@ def generate_welcome_image(
         
         # Use simple fonts if custom failed
         bold_font = "pop-bold" if os.path.exists(font_bold) else "helv"
+        light_font = "pop-light" if os.path.exists(font_light) else "helv"
         reg_font = "pop-reg" if os.path.exists(font_reg) else "helv"
 
         page.insert_text((563, 500), first_name, fontsize=77, fontname=bold_font, color=text_color)
-        page.insert_text((563, 580), last_name, fontsize=77, fontname=bold_font, color=text_color)
+        page.insert_text((563, 580), last_name, fontsize=77, fontname=light_font, color=text_color)
         page.insert_text((563, 640), title, fontsize=25, fontname=reg_font, color=text_color)
         page.insert_text((563, 700), date_str, fontsize=26, fontname=bold_font, color=text_color)
         

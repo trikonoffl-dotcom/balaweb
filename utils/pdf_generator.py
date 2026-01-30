@@ -35,7 +35,8 @@ def generate_id_card_pdf(
             "ru-bold": "Rubik-Bold.ttf",
             "ru-reg": "Rubik-Regular.ttf",
             "ru-semi": "Rubik-SemiBold.ttf",
-            "ru-italic": "Rubik-Italic.ttf"
+            "ru-italic": "Rubik-Italic.ttf",
+            "ru-light": "Rubik-Light.ttf"
         }
         
         loaded_fonts = []
@@ -59,7 +60,7 @@ def generate_id_card_pdf(
         # Front Text
         page0 = doc[0]
         page0.insert_text((14.8, 148), first_name.upper(), fontsize=15, fontname=get_font("ru-bold"), color=blue_text)
-        page0.insert_text((15.0, 168), last_name.upper(), fontsize=11, fontname=get_font("ru-reg"), color=blue_text)
+        page0.insert_text((15.0, 168), last_name.upper(), fontsize=11, fontname=get_font("ru-light"), color=blue_text)
         page0.insert_text((15.5, 183), title, fontsize=8, fontname=get_font("ru-reg"), color=blue_text)
         
         # Handling Date object vs string
