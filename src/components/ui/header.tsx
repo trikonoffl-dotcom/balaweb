@@ -1,6 +1,4 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from './button'
+import { BackendStatus } from '../backend-status'
 
 export function Header() {
     return (
@@ -18,7 +16,8 @@ export function Header() {
                     </div>
                 </Link>
                 <div className="ml-auto flex items-center space-x-4">
-                    <span className="text-sm text-gray-500">v2.0 (Vercel)</span>
+                    <BackendStatus />
+                    <span className="text-sm text-gray-500">v2.1 (Cloudflare)</span>
                 </div>
             </div>
         </header>
